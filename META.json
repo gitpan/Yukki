@@ -1,0 +1,81 @@
+{
+   "abstract" : "Yet Uh-nother wiki",
+   "author" : [
+      "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.102400",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Yukki",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.31",
+            "File::ShareDir::Install" : "0.03"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Digest::SHA1" : 0,
+            "File::Copy::Recursive" : 0,
+            "File::Path" : 0,
+            "File::ShareDir" : 0,
+            "Git::Repository" : 0,
+            "HTTP::Throwable::Factory" : 0,
+            "IO::Prompter" : 0,
+            "JSON" : 0,
+            "LWP::MediaTypes" : 0,
+            "List::MoreUtils" : 0,
+            "Moose" : 0,
+            "Moose::Role" : 0,
+            "Moose::Util::TypeConstraints" : 0,
+            "MooseX::Params::Validate" : 0,
+            "MooseX::Types" : 0,
+            "MooseX::Types::Moose" : 0,
+            "MooseX::Types::Path::Class" : 0,
+            "MooseX::Types::Structured" : 0,
+            "Number::Bytes::Human" : 0,
+            "Path::Class" : 0,
+            "Path::Router" : 0,
+            "Path::Router::Route" : 0,
+            "Path::Router::Route::Match" : 0,
+            "Plack::Request" : 0,
+            "Plack::Response" : 0,
+            "Scalar::Util" : 0,
+            "Template::Semantic" : 0,
+            "Text::MultiMarkdown" : 0,
+            "Throwable::Error" : 0,
+            "Try::Tiny" : 0,
+            "XML::Twig" : 0,
+            "YAML" : 0,
+            "autodie" : 0,
+            "perl" : "v5.12.1"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "mailto" : "bug-Yukki@rt.cpan.org",
+         "web" : "http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki"
+      },
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/zostay/Yukki.git",
+         "web" : "http://github.com/zostay/Yukki"
+      }
+   },
+   "version" : "0.110830"
+}
+
