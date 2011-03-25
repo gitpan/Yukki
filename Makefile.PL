@@ -30,6 +30,7 @@ my %WriteMakefileArgs = (
   'LICENSE' => 'perl',
   'NAME' => 'Yukki',
   'PREREQ_PM' => {
+    'CHI' => '0',
     'Digest::SHA1' => '0',
     'File::Copy::Recursive' => '0',
     'File::Path' => '0',
@@ -55,6 +56,7 @@ my %WriteMakefileArgs = (
     'Path::Router::Route::Match' => '0',
     'Plack::Request' => '0',
     'Plack::Response' => '0',
+    'Plack::Session::Store::Cache' => '0',
     'Scalar::Util' => '0',
     'Template::Semantic' => '0',
     'Text::MultiMarkdown' => '0',
@@ -64,7 +66,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.110830',
+  'VERSION' => '0.110840',
   'test' => {
     'TESTS' => 't/*.t'
   }

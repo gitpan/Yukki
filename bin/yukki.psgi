@@ -19,7 +19,7 @@ builder {
     mount "/template" => Plack::App::File->new( root => $server->locate_dir('static_path', 'template') );
 
     mount "/"       => builder { 
-        enable 'Session';
+        enable $server->session_middleware;
 
         $app;
     };
@@ -38,7 +38,7 @@ yukki.psgi - the Yukki web application
 
 =head1 VERSION
 
-version 0.110830
+version 0.110840
 
 =head1 SYNOPSIS
 

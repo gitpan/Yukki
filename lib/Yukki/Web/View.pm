@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.110830';
+  $Yukki::Web::View::VERSION = '0.110840';
 }
 use 5.12.1;
 use Moose;
@@ -107,9 +107,12 @@ sub render_page {
             '#bottom-navigation .navigation' => [ map { 
                 { 'a' => $_->{label}, 'a@href' => $_->{href} },
             } @nav_menu ],
+            '#breadcrumb li' => [ map {
+                { 'a' => $_->{label}, 'a@href' => $_->{href} },
+            } $ctx->response->breadcrumb_links ],
             '#content'    => $self->render(template => $template, vars => $vars),
         },
-    );
+    )->{dom}->toStringHTML;
 }
 
 
@@ -136,7 +139,7 @@ sub render {
     );
     
     my $template_file = $self->locate('template_path', $template);
-
+    
     return $self->semantic->process($template_file, $vars);
 }
 
@@ -146,9 +149,34 @@ sub yukkilink {
 
     my $repository = $params->{repository};
     my $link       = $params->{link};
-    my $label      = $params->{label} // $link;
+    my $label      = $params->{label};
 
-    ($repository, $link) = split /:/, 2 if $link =~ /:/;
+    my ($repo_name, $local_link) = split /:/, $link, 2 if $link =~ /:/;
+    if (defined $repo_name and defined $self->app->settings->{repositories}{$repo_name}) {
+        $repository = $repo_name;
+        $link       = $local_link;
+    }
+    
+    # If we did not get a label, make the label into the link
+    if (not defined $label) {
+        ($label) = $link =~ m{([^/]+)$};
+
+        $link =~ s{[^a-zA-Z0-9-_./]+}{-}g;
+        $link =~ s{-+}{-}g;
+        $link =~ s{^-}{};
+        $link =~ s{-$}{};
+
+        $link .= '.yukki';
+    }
+
+    my @base_name;
+    if ($params->{page}) {
+        $base_name[0] = $params->{page};
+        $base_name[0] =~ s/\.yukki$//g;
+    }
+
+    $link = join '/', @base_name, $link if $link =~ m{^\./};
+    $link =~ s{^/}{};
 
     $label =~ s/^\s*//; $label =~ s/\s*$//;
     return qq{<a href="/page/view/$repository/$link">$label</a>};
@@ -201,10 +229,11 @@ sub yukkitext {
 
     # Yukki Links
     $yukkitext =~ s{ 
+        (?<!\\)                 # \ will escape the link
         \[\[ \s*                # [[ to start it
 
             (?: ([\w]+) : )?    # repository: is optional
-            ([\w/.\-]+) \s*     # link/to/page is mandatory
+            ([^|\]]+) \s*       # link/to/page is mandatory
 
             (?: \|              # | to split link from label
                 ([^\]]+)        # a pretty label (needs trimming)
@@ -221,8 +250,24 @@ sub yukkitext {
         });
     }xeg;
 
+    # Handle escaped links, hide the escape
+    $yukkitext =~ s{ 
+        \\                      # \ will escape the link
+        (\[\[ \s*               # [[ to start it
+
+            (?: [\w]+ : )?      # repository: is optional
+            [\w/.\-]+ \s*       # link/to/page is mandatory
+
+            (?: \|              # | to split link from label
+                [^\]]+          # a pretty label (needs trimming)
+            )?                  # is optional
+
+        \]\])                    # ]] to end
+    }{$1}gx;
+
     # Yukki Plugins
     $yukkitext =~ s{
+        (?<!\\)                 # \ will escape the plugin
         \{\{ \s*                # {{ to start it
 
             ([\w]+) :           # plugin_name: is required
@@ -239,6 +284,18 @@ sub yukkitext {
         });
     }xeg;
 
+    # Handle the escaped plugin thing
+    $yukkitext =~ s{
+        \\                      # \ will escape the plugin
+        (\{\{ \s*               # {{ to start it
+
+            [\w]+ :             # plugin_name: is required
+
+            .*                  # plugin arguments
+
+        \}\})                   # }} to end
+    }{$1}xg;
+
     return '<div>' . $self->format_markdown($yukkitext) . '</div>';
 }
 
@@ -253,7 +310,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.110830
+version 0.110840
 
 =head1 DESCRIPTION
 

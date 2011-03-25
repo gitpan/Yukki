@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.110830';
+  $Yukki::Web::Controller::Page::VERSION = '0.110840';
 }
 use 5.12.1;
 use Moose;
@@ -71,10 +71,13 @@ sub view_page {
     my $page    = $self->lookup_page($repo_name, $path);
     my $content = $page->fetch;
 
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
     my $body;
     if (not defined $content) {
         $body = $self->view('Page')->blank($ctx, { 
             title      => $page->file_name,
+            breadcrumb => $breadcrumb,
             repository => $repo_name, 
             page       => $page->full_path,
         });
@@ -83,6 +86,7 @@ sub view_page {
     else {
         $body = $self->view('Page')->view($ctx, { 
             title      => $page->title,
+            breadcrumb => $breadcrumb,
             repository => $repo_name,
             page       => $page->full_path, 
             content    => $content,
@@ -99,6 +103,8 @@ sub edit_page {
     my ($repo_name, $path) = $self->repo_name_and_path($ctx);
 
     my $page = $self->lookup_page($repo_name, $path);
+
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
 
     if ($ctx->request->method eq 'POST') {
         my $new_content = $ctx->request->parameters->{yukkitext};
@@ -125,6 +131,7 @@ sub edit_page {
     $ctx->response->body( 
         $self->view('Page')->edit($ctx, { 
             title       => $page->title,
+            breadcrumb  => $breadcrumb,
             repository  => $repo_name,
             page        => $page->full_path, 
             content     => $content,
@@ -141,11 +148,14 @@ sub preview_page {
 
     my $page = $self->lookup_page($repo_name, $path);
 
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
     my $content = $ctx->request->body_parameters->{yukkitext};
 
     $ctx->response->body(
         $self->view('Page')->preview($ctx, { 
             title      => $page->title,
+            breadcrumb => $breadcrumb,
             repository => $repo_name,
             page       => $page->full_path,
             content    => $content,
@@ -171,6 +181,29 @@ sub upload_attachment {
     $self->controller('Attachment')->fire($ctx);
 }
 
+
+sub breadcrumb {
+    my ($self, $repository, $path_parts) = @_;
+
+    my @breadcrumb;
+    my @path_acc;
+    
+    for my $path_part (@$path_parts) {
+        push @path_acc, $path_part;
+        my $file = $repository->file({
+            path     => join('/', @path_acc),
+            filetype => 'yukki',
+        });
+
+        push @breadcrumb, {
+            label => $file->title,
+            href  => join('/', '/page/view', $repository->name, $file->full_path),
+        };
+    }
+
+    return \@breadcrumb;
+}
+
 1;
 
 __END__
@@ -182,7 +215,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.110830
+version 0.110840
 
 =head1 DESCRIPTION
 
@@ -218,6 +251,10 @@ Shows the preview for an edit to a page using L<Yukki::Web::View::Page/preview>.
 =head2 upload_attachment
 
 This is a facade that wraps L<Yukki::Web::Controller::Attachment/upload>.
+
+=head2 breadcrumb
+
+Given the repository and path, returns the breadcrumb.
 
 =head1 AUTHOR
 

@@ -15,6 +15,7 @@ meta-spec:
   version: 1.4
 name: Yukki
 requires:
+  CHI: 0
   Digest::SHA1: 0
   File::Copy::Recursive: 0
   File::Path: 0
@@ -40,6 +41,7 @@ requires:
   Path::Router::Route::Match: 0
   Plack::Request: 0
   Plack::Response: 0
+  Plack::Session::Store::Cache: 0
   Scalar::Util: 0
   Template::Semantic: 0
   Text::MultiMarkdown: 0
@@ -52,4 +54,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.110830
+version: 0.110840

@@ -1,6 +1,6 @@
 package Yukki::Web::Context;
 BEGIN {
-  $Yukki::Web::Context::VERSION = '0.110830';
+  $Yukki::Web::Context::VERSION = '0.110840';
 }
 use Moose;
 
@@ -71,7 +71,7 @@ Yukki::Web::Context - request-response context descriptor
 
 =head1 VERSION
 
-version 0.110830
+version 0.110840
 
 =head1 SYNOPSIS
 

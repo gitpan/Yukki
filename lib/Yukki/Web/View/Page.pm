@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.110830';
+  $Yukki::Web::View::Page::VERSION = '0.110840';
 }
 use Moose;
 
@@ -15,6 +15,7 @@ sub blank {
     my $link = "/page/edit/$vars->{repository}/$vars->{page}";
 
     $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
 
     return $self->render_page(
         template => 'page/blank.html',
@@ -31,6 +32,7 @@ sub view {
     my ($self, $ctx, $vars) = @_;
 
     $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
 
     my $html = $self->yukkitext({
         page       => $vars->{page},
@@ -41,6 +43,7 @@ sub view {
     $ctx->response->add_navigation_item({
         label => 'Edit',
         href  => join('/', '/page/edit', $vars->{repository}, $vars->{page}),
+        sort  => undef,
     });
 
     return $self->render_page(
@@ -57,10 +60,12 @@ sub edit {
     my ($self, $ctx, $vars) = @_;
 
     $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
 
     $ctx->response->add_navigation_item({
         label => 'View',
         href  => join('/', '/page/view', $vars->{repository}, $vars->{page}),
+        sort  => 50,
     });
 
     my $html = $self->yukkitext({
@@ -153,7 +158,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.110830
+version 0.110840
 
 =head1 DESCRIPTION
 

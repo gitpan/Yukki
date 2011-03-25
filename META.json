@@ -22,6 +22,7 @@
       },
       "runtime" : {
          "requires" : {
+            "CHI" : 0,
             "Digest::SHA1" : 0,
             "File::Copy::Recursive" : 0,
             "File::Path" : 0,
@@ -47,6 +48,7 @@
             "Path::Router::Route::Match" : 0,
             "Plack::Request" : 0,
             "Plack::Response" : 0,
+            "Plack::Session::Store::Cache" : 0,
             "Scalar::Util" : 0,
             "Template::Semantic" : 0,
             "Text::MultiMarkdown" : 0,
@@ -76,6 +78,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.110830"
+   "version" : "0.110840"
 }
 
