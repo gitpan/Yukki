@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.110840';
+  $Yukki::Model::File::VERSION = '0.110850';
 }
 use 5.12.1;
 use Moose;
@@ -51,6 +51,26 @@ has repository => (
         'author_email'        => 'author_email',
     },
 );
+
+
+sub BUILDARGS {
+    my $class = shift;
+
+    my %args;
+    if (@_ == 1) { %args = %{ $_[0] }; }
+    else         { %args = @_; }
+
+    if ($args{full_path}) {
+        my $full_path = delete $args{full_path};
+
+        my ($path, $filetype) = $full_path =~ m{^(.*)(?:\.(\w+))?$};
+
+        $args{path}     = $path;
+        $args{filetype} = $filetype;
+    }
+
+    return \%args;
+}
 
 
 sub full_path {
@@ -104,7 +124,9 @@ sub title {
         }
     }
 
-    return $self->file_name;
+    my $title = $self->file_name;
+    $title =~ s/\.(\w+)$//g;
+    return $title;
 }
 
 
@@ -188,7 +210,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 SYNOPSIS
 
@@ -222,6 +244,10 @@ This is the the L<Yukki::Model::Repository> the file will be fetched from or
 stored into.
 
 =head1 METHODS
+
+=head2 BUILDARGS
+
+Allows C<full_path> to be given instead of C<path> and C<filetype>.
 
 =head2 full_path
 

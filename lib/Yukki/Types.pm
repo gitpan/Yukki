@@ -1,6 +1,6 @@
 package Yukki::Types;
 BEGIN {
-  $Yukki::Types::VERSION = '0.110840';
+  $Yukki::Types::VERSION = '0.110850';
 }
 use Moose;
 
@@ -53,7 +53,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 SYNOPSIS
 

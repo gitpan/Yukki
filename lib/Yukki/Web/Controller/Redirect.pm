@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Redirect;
 BEGIN {
-  $Yukki::Web::Controller::Redirect::VERSION = '0.110840';
+  $Yukki::Web::Controller::Redirect::VERSION = '0.110850';
 }
 use 5.12.1;
 use Moose;
@@ -31,7 +31,7 @@ Yukki::Web::Controller::Redirect - Simple controller for handling internal redir
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 DESCRIPTION
 

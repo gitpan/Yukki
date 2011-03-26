@@ -62,11 +62,12 @@ my %WriteMakefileArgs = (
     'Text::MultiMarkdown' => '0',
     'Throwable::Error' => '0',
     'Try::Tiny' => '0',
+    'URI::Escape' => '0',
     'XML::Twig' => '0',
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.110840',
+  'VERSION' => '0.110850',
   'test' => {
     'TESTS' => 't/*.t'
   }

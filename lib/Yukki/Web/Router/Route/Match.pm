@@ -1,6 +1,6 @@
 package Yukki::Web::Router::Route::Match;
 BEGIN {
-  $Yukki::Web::Router::Route::Match::VERSION = '0.110840';
+  $Yukki::Web::Router::Route::Match::VERSION = '0.110850';
 }
 use Moose;
 
@@ -39,7 +39,7 @@ Yukki::Web::Router::Route::Match - Matching with access controls
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 DESCRIPTION
 

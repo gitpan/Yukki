@@ -47,6 +47,7 @@ requires:
   Text::MultiMarkdown: 0
   Throwable::Error: 0
   Try::Tiny: 0
+  URI::Escape: 0
   XML::Twig: 0
   YAML: 0
   autodie: 0
@@ -54,4 +55,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.110840
+version: 0.110850

@@ -1,6 +1,6 @@
 package Yukki::Web::Router;
 BEGIN {
-  $Yukki::Web::Router::VERSION = '0.110840';
+  $Yukki::Web::Router::VERSION = '0.110850';
 }
 use Moose;
 
@@ -74,7 +74,7 @@ sub BUILD {
             action     => qr/^(?:view|edit|preview|attach)$/,
             repository => qr/^[_a-z0-9]+$/i,
             page       => subtype('ArrayRef[Str]' => where {
-                all { /^[_a-z0-9-]+(?:\.[_a-z0-9-]+)*$/i } @$_
+                all { /^[_a-z0-9-.]+(?:\.[_a-z0-9-]+)*$/i } @$_
             }),
         },
         acl => [
@@ -116,7 +116,7 @@ Yukki::Web::Router - send requests to the correct controllers, yo
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 DESCRIPTION
 

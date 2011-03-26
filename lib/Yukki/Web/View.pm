@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.110840';
+  $Yukki::Web::View::VERSION = '0.110850';
 }
 use 5.12.1;
 use Moose;
@@ -10,6 +10,7 @@ use Path::Class;
 use Scalar::Util qw( blessed reftype );
 use Template::Semantic;
 use Text::MultiMarkdown;
+use URI::Escape qw( uri_escape );
 use XML::Twig;
 
 # ABSTRACT: base class for Yukki::Web views
@@ -177,9 +178,13 @@ sub yukkilink {
 
     $link = join '/', @base_name, $link if $link =~ m{^\./};
     $link =~ s{^/}{};
+    $link =~ s{/\./}{/}g;
 
     $label =~ s/^\s*//; $label =~ s/\s*$//;
-    return qq{<a href="/page/view/$repository/$link">$label</a>};
+
+    my $file = $self->model('Repository', { name => $repository })->file({ full_path => $link });
+    my $class = $file->exists ? 'exists' : 'not-exists';
+    return qq{<a class="$class" href="/page/view/$repository/$link">$label</a>};
 }
 
 
@@ -197,7 +202,7 @@ sub yukkiplugin {
             ^\s*
 
                 (?: ([\w]+) : )?    # repository: is optional
-                ([\w/.\-]+)         # link/to/page is mandatory
+                (.+)                # link/to/page is mandatory
 
             \s*$
 
@@ -208,6 +213,7 @@ sub yukkiplugin {
         my $link       = $2;
 
         $page =~ s{\.yukki$}{};
+        $link = join "/", map { uri_escape($_) } split m{/}, $link;
 
         if ($link =~ m{^/}) {
             return "/attachment/view/$repository$link";
@@ -310,7 +316,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 DESCRIPTION
 

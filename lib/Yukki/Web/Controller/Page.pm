@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.110840';
+  $Yukki::Web::Controller::Page::VERSION = '0.110850';
 }
 use 5.12.1;
 use Moose;
@@ -187,6 +187,11 @@ sub breadcrumb {
 
     my @breadcrumb;
     my @path_acc;
+
+    push @breadcrumb, {
+        label => $repository->title,
+        href  => join('/', '/page/view/', $repository->name),
+    };
     
     for my $path_part (@$path_parts) {
         push @path_acc, $path_part;
@@ -215,7 +220,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 DESCRIPTION
 

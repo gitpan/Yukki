@@ -1,6 +1,6 @@
 package Yukki::Model::Repository;
 BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.110840';
+  $Yukki::Model::Repository::VERSION = '0.110850';
 }
 use Moose;
 
@@ -73,6 +73,20 @@ sub _build_branch {
     my $self = shift;
     $self->repository_settings->{site_branch} 
         // 'refs/heads/master';
+}
+
+
+has title => (
+    is          => 'ro',
+    isa         => 'Str',
+    required    => 1,
+    lazy_build  => 1,
+);
+
+sub _build_title {
+    my $self = shift;
+    $self->repository_settings->{name}
+        // $self->name;
 }
 
 
@@ -261,6 +275,8 @@ sub list_files {
     FILE: for my $line (@tree_files) {
         my ($mode, $type, $id, $name) = split /\s+/, $line, 4;
 
+        next unless $type eq 'blob';
+
         my $filetype;
         if ($name =~ s/\.(?<filetype>[a-z0-9]+)$//) {
             $filetype = $+{filetype};
@@ -294,7 +310,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.110840
+version 0.110850
 
 =head1 SYNOPSIS
 
@@ -339,6 +355,10 @@ This is a L<Git::Repository> object which helps us do the real work.
 This is the branch to use when working with the git repository. This is either
 pulled from the C<site_branch> key in the configuration or defaults to
 "refs/heads/master".
+
+=head2 title
+
+This is the name given to the repository.
 
 =head2 author_name
 
