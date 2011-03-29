@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.110850';
+  $Yukki::Model::File::VERSION = '0.110880';
 }
 use 5.12.1;
 use Moose;
@@ -210,7 +210,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 SYNOPSIS
 

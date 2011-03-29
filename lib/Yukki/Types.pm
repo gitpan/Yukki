@@ -1,16 +1,18 @@
 package Yukki::Types;
 BEGIN {
-  $Yukki::Types::VERSION = '0.110850';
+  $Yukki::Types::VERSION = '0.110880';
 }
 use Moose;
 
 use MooseX::Types -declare => [ qw(
     LoginName AccessLevel NavigationLinks
-    BreadcrumbLinks
+    BreadcrumbLinks RepositoryMap
 ) ];
 
-use MooseX::Types::Moose qw( Str Int ArrayRef Maybe );
+use MooseX::Types::Moose qw( Str Int ArrayRef Maybe HashRef );
 use MooseX::Types::Structured qw( Dict );
+
+use Email::Address;
 
 # ABSTRACT: standard types for use in Yukki
 
@@ -42,6 +44,45 @@ subtype BreadcrumbLinks,
         ],
     ];
 
+
+subtype RepositoryMap,
+    as HashRef['Yukki::Settings::Repository'];
+
+coerce RepositoryMap,
+    from HashRef,
+    via { 
+        my $source = $_;
+        +{
+            map { $_ => Yukki::Settings::Repository->new($source->{$_}) }
+                keys %$source
+        }
+    };
+
+
+class_type 'Email::Address';
+coerce 'Email::Address',
+    from Str,
+    via { (Email::Address->parse($_))[0] };
+
+
+class_type 'Yukki::Settings';
+coerce 'Yukki::Settings',
+    from HashRef,
+    via { Yukki::Settings->new($_) };
+
+
+class_type 'Yukki::Web::Settings';
+coerce 'Yukki::Web::Settings',
+    from HashRef,
+    via { Yukki::Web::Settings->new($_) };
+
+
+class_type 'Yukki::Settings::Anonymous';
+coerce 'Yukki::Settings::Anonymous',
+    from HashRef,
+    via { Yukki::Settings::Anonymous->new($_) };
+
+
 1;
 
 __END__
@@ -53,7 +94,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 SYNOPSIS
 
@@ -98,6 +139,30 @@ THis is an array of hashes formatted like:
       label => 'Label',
       href  => '/link/to/somewhere',
   }
+
+=head2 RepositoryMap
+
+This is a hash of L<Yukki::Settings::Repository> objects.
+
+=head1 COERCIONS
+
+In addition to the types above, these coercions are provided for other types.
+
+=head2 Email::Address
+
+Coerces a C<Str> into an L<Email::Address>.
+
+=head2 Yukki::Settings
+
+Coerces a C<HashRef> into this object by passing the value to the constructor.
+
+=head2 Yukki::Web::Settings
+
+Coerces a C<HashRef> into a L<Yukki::Web::Settings>.
+
+=head2 Yukki::Settings::Anonymous
+
+Coerces a C<HashRef> into this object by passing the value to the constructor.
 
 =head1 AUTHOR
 

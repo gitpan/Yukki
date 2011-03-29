@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.110850';
+  $Yukki::Web::Controller::Page::VERSION = '0.110880';
 }
 use 5.12.1;
 use Moose;
@@ -35,10 +35,9 @@ sub repo_name_and_path {
 
     if (not defined $path) {
         my $repo_config 
-            = $self->app->settings->{repositories}{$repo_name};
+            = $self->app->settings->repositories->{$repo_name};
 
-        my $path_str = $repo_config->{default_page}
-                    // 'home.yukki';
+        my $path_str = $repo_config->default_page;
 
         $path = [ split m{/}, $path_str ];
     }
@@ -220,7 +219,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 DESCRIPTION
 

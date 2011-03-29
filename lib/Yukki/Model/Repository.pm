@@ -1,6 +1,6 @@
 package Yukki::Model::Repository;
 BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.110850';
+  $Yukki::Model::Repository::VERSION = '0.110880';
 }
 use Moose;
 
@@ -23,12 +23,16 @@ has name => (
 
 has repository_settings => (
     is          => 'ro',
-    isa         => 'HashRef',
+    isa         => 'Yukki::Settings::Repository',
     required    => 1,
     lazy        => 1,
     default     => sub { 
         my $self = shift;
-        $self->app->settings->{repositories}{$self->name};
+        $self->app->settings->repositories->{$self->name};
+    },
+    handles     => {
+        'title'  => 'name',
+        'branch' => 'site_branch',
     },
 );
 
@@ -45,7 +49,7 @@ sub _build_repository_path {
     my $self = shift;
     
     my $repo_settings = $self->repository_settings;
-    return $self->locate_dir('repository_path', $repo_settings->{repository});
+    return $self->locate_dir('repository_path', $repo_settings->repository);
 }
 
 
@@ -62,60 +66,10 @@ sub _build_git {
 }
 
 
-has branch => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 1,
-    lazy_build  => 1,
-);
-
-sub _build_branch {
-    my $self = shift;
-    $self->repository_settings->{site_branch} 
-        // 'refs/heads/master';
-}
+sub author_name { shift->app->settings->anonymous->author_name }
 
 
-has title => (
-    is          => 'ro',
-    isa         => 'Str',
-    required    => 1,
-    lazy_build  => 1,
-);
-
-sub _build_title {
-    my $self = shift;
-    $self->repository_settings->{name}
-        // $self->name;
-}
-
-
-has author_name => (
-    is          => 'rw',
-    isa         => 'Str',
-    required    => 1,
-    lazy_build  => 1,
-);
-
-sub _build_author_name {
-    my $self = shift;
-    $self->app->settings->{anonymous}{author_name}
-        // 'Anonymous'
-}
-
-
-has author_email => (
-    is          => 'rw',
-    isa         => 'Str',
-    required    => 1,
-    lazy_build  => 1,
-);
-
-sub _build_author_email {
-    my $self = shift;
-    $self->app->settings->{anonymous}{author_email}
-        // 'anonymous@localhost'
-}
+sub author_email { shift->app->settings->anonymous->author_email }
 
 
 sub make_tree {
@@ -310,7 +264,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 SYNOPSIS
 
@@ -350,15 +304,7 @@ and C<repository> keys in the configuration.
 
 This is a L<Git::Repository> object which helps us do the real work.
 
-=head2 branch
-
-This is the branch to use when working with the git repository. This is either
-pulled from the C<site_branch> key in the configuration or defaults to
-"refs/heads/master".
-
-=head2 title
-
-This is the name given to the repository.
+=head1 METHODS
 
 =head2 author_name
 
@@ -373,8 +319,6 @@ This is the author email to use when making changes to the repository.
 
 This is taken from teh C<author_email> of the C<anonymous> key in the
 configuration or defaults to "anonymous@localhost".
-
-=head1 METHODS
 
 =head2 make_tree
 

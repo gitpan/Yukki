@@ -1,6 +1,6 @@
 package Yukki::Web;
 BEGIN {
-  $Yukki::Web::VERSION = '0.110850';
+  $Yukki::Web::VERSION = '0.110880';
 }
 use Moose;
 
@@ -9,6 +9,7 @@ extends qw( Yukki );
 use Yukki::Error;
 use Yukki::Web::Context;
 use Yukki::Web::Router;
+use Yukki::Web::Settings;
 
 use CHI;
 use HTTP::Throwable::Factory qw( http_throw http_exception );
@@ -17,6 +18,9 @@ use Scalar::Util qw( blessed );
 use Try::Tiny;
 
 # ABSTRACT: the Yukki web server
+
+
+has '+settings' => ( isa => 'Yukki::Web::Settings' );
 
 
 has router => (
@@ -88,10 +92,10 @@ sub dispatch {
             });
         }
 
-        for my $repository (keys %{ $self->settings->{repositories} }) {
-            my $config = $self->settings->{repositories}{$repository};
+        for my $repository (keys %{ $self->settings->repositories }) {
+            my $config = $self->settings->repositories->{$repository};
 
-            my $name = $config->{name} // ucfirst $repository;
+            my $name = $config->name;
             $ctx->response->add_navigation_item({
                 label => $name,
                 href  => join('/', '/page/view',  $repository),
@@ -156,7 +160,7 @@ Yukki::Web - the Yukki web server
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 DESCRIPTION
 

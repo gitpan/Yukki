@@ -38,7 +38,7 @@ yukki.psgi - the Yukki web application
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 SYNOPSIS
 

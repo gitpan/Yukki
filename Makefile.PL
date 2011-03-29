@@ -14,6 +14,8 @@ my %WriteMakefileArgs = (
   'ABSTRACT' => 'Yet Uh-nother wiki',
   'AUTHOR' => 'Andrew Sterling Hanenkamp <hanenkamp@cpan.org>',
   'BUILD_REQUIRES' => {
+    'Test::Exception' => '0',
+    'Test::Moose' => '0',
     'Test::More' => '0'
   },
   'CONFIGURE_REQUIRES' => {
@@ -24,6 +26,7 @@ my %WriteMakefileArgs = (
   'EXE_FILES' => [
     'bin/yukki-add-user',
     'bin/yukki-git-init',
+    'bin/yukki-passwd',
     'bin/yukki-setup',
     'bin/yukki.psgi'
   ],
@@ -31,7 +34,9 @@ my %WriteMakefileArgs = (
   'NAME' => 'Yukki',
   'PREREQ_PM' => {
     'CHI' => '0',
+    'Crypt::SaltedHash' => '0',
     'Digest::SHA1' => '0',
+    'Email::Address' => '0',
     'File::Copy::Recursive' => '0',
     'File::Path' => '0',
     'File::ShareDir' => '0',
@@ -67,7 +72,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.110850',
+  'VERSION' => '0.110880',
   'test' => {
     'TESTS' => 't/*.t'
   }

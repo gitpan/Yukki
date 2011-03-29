@@ -1,12 +1,14 @@
 package Yukki;
 BEGIN {
-  $Yukki::VERSION = '0.110850';
+  $Yukki::VERSION = '0.110880';
 }
 use 5.12.1;
 use Moose;
 
+use Yukki::Settings;
 use Yukki::Types qw( AccessLevel );
 
+use Crypt::SaltedHash;
 use MooseX::Params::Validate;
 use MooseX::Types::Path::Class;
 use Path::Class;
@@ -43,8 +45,9 @@ sub _build_config_file {
 
 has settings => (
     is          => 'ro',
-    isa         => 'HashRef',
+    isa         => 'Yukki::Settings',
     required    => 1,
+    coerce      => 1,
     lazy_build  => 1,
 );
 
@@ -75,9 +78,9 @@ sub _locate {
                    : $type eq 'dir'  ? 'Path::Class::Dir'
                    : Yukki::Error->throw("unkonwn location type $type");
 
-    my $base_path = $self->settings->{$base};
+    my $base_path = $self->settings->$base;
     if ($base_path !~ m{^/}) {
-        return $path_class->new($self->settings->{root}, $base_path, @extra_path);
+        return $path_class->new($self->settings->root, $base_path, @extra_path);
     }
     else {
         return $path_class->new($base_path, @extra_path);
@@ -103,11 +106,15 @@ sub check_access {
         needs      => { isa => AccessLevel },
     );
 
-    my $config = $self->settings->{repositories}{$repository}
-              // {};
+    # Always grant none
+    return 1 if $needs eq 'none';
 
-    my $read_groups  = $config->{read_groups}  // 'NONE';
-    my $write_groups = $config->{write_groups} // 'NONE';
+    my $config = $self->settings->repositories->{$repository};
+
+    return '' unless $config;
+
+    my $read_groups  = $config->read_groups;
+    my $write_groups = $config->write_groups;
 
     my %access_level = (none => 0, read => 1, write => 2);
     my $has_access = sub {
@@ -115,7 +122,7 @@ sub check_access {
     };
 
     # Deal with anonymous users first. 
-    return 1 if $has_access->($config->{anonymous_access_level});
+    return 1 if $has_access->($config->anonymous_access_level);
     return '' unless $user;
 
     # Only logged users considered here forward.
@@ -124,23 +131,31 @@ sub check_access {
     for my $level (qw( read write )) {
         if ($has_access->($level)) {
 
-            return 1 if $config->{"${level}_groups"} ~~ 'ANY';
+            my $groups = "${level}_groups";
 
-            if (ref $config->{"${level}_groups"} eq 'ARRAY') {
-                my @level_groups = @{ $config->{"${level}_groups"} };
+            return 1 if $config->$groups ~~ 'ANY';
+
+            if (ref $config->$groups eq 'ARRAY') {
+                my @level_groups = @{ $config->$groups };
 
                 for my $level_group (@level_groups) {
                     return 1 if $level_group ~~ @user_groups;
                 }
             }
             else {
-                warn "weird value in ${level}_groups config for ",
-                     "$repository settings";
+                warn "weird value in $groups config for $repository settings";
             }
         }
     } 
 
     return '';
+}
+
+
+sub hasher {
+    my $self = shift;
+
+    return Crypt::SaltedHash->new(algorithm => $self->settings->digest);
 }
 
 with qw( Yukki::Role::App );
@@ -157,7 +172,7 @@ Yukki - Yet Uh-nother wiki
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 DESCRIPTION
 
@@ -236,6 +251,10 @@ the repository the user is trying to gain access to. The C<needs> is the access
 level the user needs. It must be an L<Yukki::Types/AccessLevel>.
 
 The method returns a true value if access should be granted or false otherwise.
+
+=head2 hasher
+
+Returns a message digest object that can be used to create a cryptographic hash.
 
 =head1 WHY?
 

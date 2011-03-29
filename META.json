@@ -23,7 +23,9 @@
       "runtime" : {
          "requires" : {
             "CHI" : 0,
+            "Crypt::SaltedHash" : 0,
             "Digest::SHA1" : 0,
+            "Email::Address" : 0,
             "File::Copy::Recursive" : 0,
             "File::Path" : 0,
             "File::ShareDir" : 0,
@@ -63,6 +65,8 @@
       },
       "test" : {
          "requires" : {
+            "Test::Exception" : 0,
+            "Test::Moose" : 0,
             "Test::More" : 0
          }
       }
@@ -79,6 +83,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.110850"
+   "version" : "0.110880"
 }
 

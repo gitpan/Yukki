@@ -3,6 +3,8 @@ abstract: 'Yet Uh-nother wiki'
 author:
   - 'Andrew Sterling Hanenkamp <hanenkamp@cpan.org>'
 build_requires:
+  Test::Exception: 0
+  Test::Moose: 0
   Test::More: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.31
@@ -16,7 +18,9 @@ meta-spec:
 name: Yukki
 requires:
   CHI: 0
+  Crypt::SaltedHash: 0
   Digest::SHA1: 0
+  Email::Address: 0
   File::Copy::Recursive: 0
   File::Path: 0
   File::ShareDir: 0
@@ -55,4 +59,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.110850
+version: 0.110880

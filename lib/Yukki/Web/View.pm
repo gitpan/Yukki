@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.110850';
+  $Yukki::Web::View::VERSION = '0.110880';
 }
 use 5.12.1;
 use Moose;
@@ -152,6 +152,8 @@ sub yukkilink {
     my $link       = $params->{link};
     my $label      = $params->{label};
 
+    $link =~ s/^\s+//; $link =~ s/\s+$//;
+
     my ($repo_name, $local_link) = split /:/, $link, 2 if $link =~ /:/;
     if (defined $repo_name and defined $self->app->settings->{repositories}{$repo_name}) {
         $repository = $repo_name;
@@ -212,6 +214,8 @@ sub yukkiplugin {
         my $page       = $params->{page};
         my $link       = $2;
 
+        $link =~ s/^\s+//; $link =~ s/\s+$//;
+
         $page =~ s{\.yukki$}{};
         $link = join "/", map { uri_escape($_) } split m{/}, $link;
 
@@ -262,7 +266,7 @@ sub yukkitext {
         (\[\[ \s*               # [[ to start it
 
             (?: [\w]+ : )?      # repository: is optional
-            [\w/.\-]+ \s*       # link/to/page is mandatory
+            [^|\]]+ \s*         # link/to/page is mandatory
 
             (?: \|              # | to split link from label
                 [^\]]+          # a pretty label (needs trimming)
@@ -316,7 +320,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 DESCRIPTION
 

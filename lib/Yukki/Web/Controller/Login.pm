@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Login;
 BEGIN {
-  $Yukki::Web::Controller::Login::VERSION = '0.110850';
+  $Yukki::Web::Controller::Login::VERSION = '0.110880';
 }
 use 5.12.1;
 use Moose;
@@ -32,6 +32,16 @@ sub show_login_page {
 }
 
 
+sub check_password {
+    my ($self, $user, $password) = @_;
+
+    return scalar $self->app->hasher->validate(
+        $user->{password}, 
+        $password,
+    );
+}
+
+
 sub check_login_submission {
     my ($self, $ctx) = @_;
     
@@ -42,7 +52,7 @@ sub check_login_submission {
 
     $ctx->add_errors('no such user or you typed your password incorrectly') unless $user;
 
-    if ($user and $user->{password} ne $password) {
+    if (not ($user and $self->check_password($user, $password))) {
         $ctx->add_errors('no such user or you typed your password incorrectly');
     }
 
@@ -78,7 +88,7 @@ Yukki::Web::Controller::Login - shows the login page and handles login
 
 =head1 VERSION
 
-version 0.110850
+version 0.110880
 
 =head1 DESCRIPTION
 
@@ -93,6 +103,10 @@ Routes page reqquests to L</show_login_page>, submit requests to L</check_login_
 =head2 show_login_page
 
 Calls L<Yukki::Web::View::Login/page> to display the login page.
+
+=head2 check_password
+
+Checks that the user's password is valid.
 
 =head2 check_login_submission
 

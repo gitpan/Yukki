@@ -7,6 +7,7 @@ Makefile.PL
 README
 bin/yukki-add-user
 bin/yukki-git-init
+bin/yukki-passwd
 bin/yukki-setup
 bin/yukki.psgi
 dist.ini
@@ -18,6 +19,7 @@ lib/Yukki/Model/File.pm
 lib/Yukki/Model/Repository.pm
 lib/Yukki/Model/User.pm
 lib/Yukki/Role/App.pm
+lib/Yukki/Settings.pm
 lib/Yukki/Types.pm
 lib/Yukki/Web.pm
 lib/Yukki/Web/Context.pm
@@ -31,6 +33,7 @@ lib/Yukki/Web/Response.pm
 lib/Yukki/Web/Router.pm
 lib/Yukki/Web/Router/Route.pm
 lib/Yukki/Web/Router/Route/Match.pm
+lib/Yukki/Web/Settings.pm
 lib/Yukki/Web/View.pm
 lib/Yukki/Web/View/Login.pm
 lib/Yukki/Web/View/Page.pm
@@ -77,5 +80,8 @@ skel/root/template/page/blank.html
 skel/root/template/page/edit.html
 skel/root/template/page/view.html
 skel/root/template/shell.html
+t/app.t
+t/error.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/test-site/etc/yukki.conf
