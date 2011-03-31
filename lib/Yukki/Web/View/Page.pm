@@ -1,7 +1,8 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.110880';
+  $Yukki::Web::View::Page::VERSION = '0.110900';
 }
+use 5.12.1;
 use Moose;
 
 extends 'Yukki::Web::View';
@@ -28,6 +29,21 @@ sub blank {
 }
 
 
+sub page_navigation {
+    my ($self, $response, $this_action, $vars) = @_;
+
+    for my $action (qw( view edit history )) {
+        next if $action eq $this_action;
+
+        $response->add_navigation_item({
+            label => ucfirst $action,
+            href  => join('/', '/page', $action, $vars->{repository}, $vars->{page}),
+            sort  => undef,
+        });
+    }
+}
+
+
 sub view {
     my ($self, $ctx, $vars) = @_;
 
@@ -40,11 +56,7 @@ sub view {
         yukkitext  => $vars->{content},
     });
 
-    $ctx->response->add_navigation_item({
-        label => 'Edit',
-        href  => join('/', '/page/edit', $vars->{repository}, $vars->{page}),
-        sort  => undef,
-    });
+    $self->page_navigation($ctx->response, 'view', $vars);
 
     return $self->render_page(
         template => 'page/view.html',
@@ -56,17 +68,87 @@ sub view {
 }
 
 
-sub edit {
+sub history {
     my ($self, $ctx, $vars) = @_;
 
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
-    $ctx->response->add_navigation_item({
-        label => 'View',
-        href  => join('/', '/page/view', $vars->{repository}, $vars->{page}),
-        sort  => 50,
+    $self->page_navigation($ctx->response, 'history', $vars);
+
+    my $i = 0;
+    return $self->render_page(
+        template => 'page/history.html',
+        context  => $ctx,
+        vars     => {
+            'form@action' => join('/', '/page/diff', $vars->{repository}, $vars->{page}),
+            '.revision'   => [
+                map { 
+                    my $r = {
+                        '.first-revision input@value'  => $_->{object_id},
+                        '.second-revision input@value' => $_->{object_id},
+                        '.date'                        => $_->{time_ago},
+                        '.author'                      => $_->{author_name},
+                        '.diffstat'                    => sprintf('+%d/-%d', 
+                            $_->{lines_added}, $_->{lines_removed},
+                        ),
+                        '.comment'                     => $_->{comment} || '(no comment)',
+                    }; 
+
+                    my $checked = sub { shift->setAttribute(checked => 'checked'); \$_ };
+
+                    $r->{'.first-revision  input'} = $checked if $i == 1;
+                    $r->{'.second-revision input'} = $checked if $i == 0;
+
+                    $i++;
+
+                    $r;
+                } @{ $vars->{revisions} }
+            ],
+        },
+    );
+}
+
+
+sub diff {
+    my ($self, $ctx, $vars) = @_;
+
+    $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
+
+    $self->page_navigation($ctx->response, 'diff', $vars);
+
+    my $diff = '';
+    for my $chunk (@{ $vars->{diff} }) {
+        given ($chunk->[0]) {
+            when (' ') { $diff .= $chunk->[1] }
+            when ('+') { $diff .= sprintf '<ins markdown="1">%s</ins>', $chunk->[1] }
+            when ('-') { $diff .= sprintf '<del markdown="1">%s</del>', $chunk->[1] }
+            default { warn "unknown chunk type $chunk->[0]" }
+        }
+    }
+
+    my $html = $self->yukkitext({
+        page       => $vars->{page},
+        repository => $vars->{repository},
+        yukkitext  => $diff,
     });
+
+    return $self->render_page(
+        template => 'page/diff.html',
+        context  => $ctx,
+        vars     => {
+            '#diff' => \$html,
+        },
+    );
+}
+
+
+sub edit {
+    my ($self, $ctx, $vars) = @_;
+
+    $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
 
     my $html = $self->yukkitext({
         page       => $vars->{page},
@@ -158,7 +240,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 DESCRIPTION
 
@@ -171,9 +253,21 @@ Renders wiki pages.
 Renders a page that links to the edit page for this location. This helps you
 create the links.
 
+=head2 page_navigation
+
+Sets up the page navigation menu.
+
 =head2 view
 
 Renders a page as a view.
+
+=head2 history
+
+Display the history for a page.
+
+=head2 diff
+
+Display a diff for a file.
 
 =head2 edit
 

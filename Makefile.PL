@@ -35,6 +35,7 @@ my %WriteMakefileArgs = (
   'PREREQ_PM' => {
     'CHI' => '0',
     'Crypt::SaltedHash' => '0',
+    'DateTime::Format::Mail' => '0',
     'Digest::SHA1' => '0',
     'Email::Address' => '0',
     'File::Copy::Recursive' => '0',
@@ -72,7 +73,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.110880',
+  'VERSION' => '0.110900',
   'test' => {
     'TESTS' => 't/*.t'
   }

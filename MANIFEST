@@ -77,7 +77,9 @@ skel/root/template/login/page.html
 skel/root/template/messages.html
 skel/root/template/page/attachments.html
 skel/root/template/page/blank.html
+skel/root/template/page/diff.html
 skel/root/template/page/edit.html
+skel/root/template/page/history.html
 skel/root/template/page/view.html
 skel/root/template/shell.html
 t/app.t

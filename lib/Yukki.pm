@@ -1,6 +1,6 @@
 package Yukki;
 BEGIN {
-  $Yukki::VERSION = '0.110880';
+  $Yukki::VERSION = '0.110900';
 }
 use 5.12.1;
 use Moose;
@@ -142,8 +142,9 @@ sub check_access {
                     return 1 if $level_group ~~ @user_groups;
                 }
             }
-            else {
-                warn "weird value in $groups config for $repository settings";
+            elsif ($config->$groups ne 'NONE') {
+                warn "weird value ", $config->$groups, 
+                    " in $groups config for $repository settings";
             }
         }
     } 
@@ -172,7 +173,7 @@ Yukki - Yet Uh-nother wiki
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 DESCRIPTION
 

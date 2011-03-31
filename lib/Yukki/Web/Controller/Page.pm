@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.110880';
+  $Yukki::Web::Controller::Page::VERSION = '0.110900';
 }
 use 5.12.1;
 use Moose;
@@ -18,6 +18,8 @@ sub fire {
     given ($ctx->request->path_parameters->{action}) {
         when ('view')    { $self->view_page($ctx) }
         when ('edit')    { $self->edit_page($ctx) }
+        when ('history') { $self->view_history($ctx) }
+        when ('diff')    { $self->view_diff($ctx) }
         when ('preview') { $self->preview_page($ctx) }
         when ('attach')  { $self->upload_attachment($ctx) }
         default {
@@ -140,6 +142,51 @@ sub edit_page {
 }
 
 
+sub view_history {
+    my ($self, $ctx) = @_;
+
+    my ($repo_name, $path) = $self->repo_name_and_path($ctx);
+
+    my $page = $self->lookup_page($repo_name, $path);
+
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
+    $ctx->response->body(
+        $self->view('Page')->history($ctx, {
+            title      => $page->title,
+            breadcrumb => $breadcrumb,
+            repository => $repo_name,
+            page       => $page->full_path,
+            revisions  => [ $page->history ],
+        })
+    );
+}
+
+
+sub view_diff {
+    my ($self, $ctx) = @_;
+
+    my ($repo_name, $path) = $self->repo_name_and_path($ctx);
+
+    my $page = $self->lookup_page($repo_name, $path);
+
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
+    my $r1 = $ctx->request->query_parameters->{r1};
+    my $r2 = $ctx->request->query_parameters->{r2};
+
+    $ctx->response->body(
+        $self->view('Page')->diff($ctx, {
+            title      => $page->title,
+            breadcrumb => $breadcrumb,
+            repository => $repo_name,
+            page       => $page->full_path,
+            diff       => [ $page->diff($r1, $r2) ],
+        })
+    );
+}
+
+
 sub preview_page {
     my ($self, $ctx) = @_;
 
@@ -219,7 +266,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 DESCRIPTION
 
@@ -247,6 +294,14 @@ to show the page.
 =head2 edit_page
 
 Displays or processes the edit form for a page using.
+
+=head2 view_history
+
+Displays the page's revision history.
+
+=head2 view_diff
+
+Displays a diff of the page.
 
 =head2 preview_page
 

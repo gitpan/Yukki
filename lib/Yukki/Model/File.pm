@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.110880';
+  $Yukki::Model::File::VERSION = '0.110900';
 }
 use 5.12.1;
 use Moose;
@@ -49,6 +49,8 @@ has repository => (
         'repository_name'     => 'name',
         'author_name'         => 'author_name',
         'author_email'        => 'author_email',
+        'log'                 => 'log',
+        'diff_blobs'          => 'diff_blobs',
     },
 );
 
@@ -199,6 +201,18 @@ sub fetch {
     return $self->show($object_id);
 }
 
+
+sub history {
+    my $self = shift;
+    return $self->log($self->full_path);
+}
+
+
+sub diff {
+    my ($self, $object_id_1, $object_id_2) = @_;
+    return $self->diff_blobs($self->full_path, $object_id_1, $object_id_2);
+}
+
 1;
 
 __END__
@@ -210,7 +224,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 SYNOPSIS
 
@@ -309,6 +323,56 @@ Returns true if the file exists in the repository already.
   my @lines   = $self->fetch;
 
 Returns the contents of the file.
+
+=head2 history
+
+  my @revisions = $self->history;
+
+Returns a list of revisions. Each revision is a hash with the following keys:
+
+=over
+
+=item object_id
+
+The object ID of the commit.
+
+=item author_name
+
+The name of the commti author.
+
+=item date
+
+The date the commit was made.
+
+=item time_ago
+
+A string showing how long ago the edit took place.
+
+=item comment
+
+The comment the author made about the comment.
+
+=item lines_added
+
+Number of lines added.
+
+=item lines_removed
+
+Number of lines removed.
+
+=back
+
+=head2 diff
+
+  my @chunks = $self->diff('a939fe...', 'b7763d...');
+
+Given two object IDs, returns a list of chunks showing the difference between two revisions of this path. Each chunk is a two element array. The first element is the type of chunk and the second is any detail for that chunk.
+
+The types are:
+
+    "+"    This chunk was added to the second revision.
+    "-"    This chunk was removed in the second revision.
+    " "    This chunk is the same in both revisions.
 
 =head1 AUTHOR
 

@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Attachment;
 BEGIN {
-  $Yukki::Web::Controller::Attachment::VERSION = '0.110880';
+  $Yukki::Web::Controller::Attachment::VERSION = '0.110900';
 }
 use 5.12.1;
 use Moose;
@@ -108,7 +108,7 @@ Yukki::Web::Controller::Attachment - Controller for uploading, downloading, and 
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 DESCRIPTION
 

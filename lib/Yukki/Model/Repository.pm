@@ -1,13 +1,16 @@
 package Yukki::Model::Repository;
 BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.110880';
+  $Yukki::Model::Repository::VERSION = '0.110900';
 }
+use 5.12.1;
 use Moose;
 
 extends 'Yukki::Model';
 
+use Yukki::Error;
 use Yukki::Model::File;
 
+use DateTime::Format::Mail;
 use Git::Repository;
 use MooseX::Types::Path::Class;
 
@@ -253,6 +256,101 @@ sub file {
     );
 }
 
+
+sub log {
+    my ($self, $full_path) = @_;
+
+    my @lines = $self->git->run(
+        'log', $self->branch, '--pretty=format:%H~%an~%aD~%ar~%s', '--numstat', 
+        '--', $full_path
+    );
+
+    my @revisions;
+    my $current_revision;
+
+    my $mode = 'log';
+    for my $line (@lines) {
+        given ($mode) {
+            
+            # First line is the log line
+            when ('log') {
+                $current_revision = {};
+
+                @{ $current_revision }{qw( object_id author_name date time_ago comment )}
+                    = split /~/, $line, 5;
+
+                $current_revision->{date} = DateTime::Format::Mail->parse_datetime(
+                    $current_revision->{date}
+                );
+
+                $mode = 'stat';
+            }
+
+            # Remaining lines are the numstat
+            when ('stat') {
+                my ($added, $removed, $path) = split /\s+/, $line, 3;
+                if ($path eq $full_path) {
+                    $current_revision->{lines_added}   = $added;
+                    $current_revision->{lines_removed} = $removed;
+                }
+
+                $mode = 'skip';
+            }
+
+            # Once we know the numstat, search for the blank and start over
+            when ('skip') {
+                push @revisions, $current_revision;
+                $mode = 'log' if $line !~ /\S/;
+            }
+
+            default {
+                Yukki::Error->throw("invalid parse mode '$mode'");
+            }
+        }
+    }
+
+    return @revisions;
+}
+
+
+sub diff_blobs {
+    my ($self, $path, $object_id_1, $object_id_2) = @_;
+
+    my @lines = $self->git->run(
+        'diff', '--word-diff=porcelain', '--unified=10000000', '--patience',
+        $object_id_1, $object_id_2, '--', $path,
+    );
+
+    my @chunks;
+    my $last_chunk_type = '';
+
+    my $i = 0;
+    LINE: for my $line (@lines) {
+        next if $i++ < 5;
+
+        my ($type, $detail) = $line =~ /^(.)(.*)$/;
+        given ($type) {
+            when ([ '~', ' ', '+', '-' ]) { 
+                if ($last_chunk_type eq $type) {
+                    $chunks[-1][1] .= $detail;
+                }
+                elsif ($type eq '~') {
+                    $chunks[-1][1] .= "\n";
+                }
+                else {
+                    push @chunks, [ $type, $detail ];
+                    $last_chunk_type = $type;
+                }
+            }
+
+            when ('\\') { }
+            default { warn "unknown diff line type $type" }
+        }
+    }
+
+    return @chunks;
+}
+
 1;
 
 __END__
@@ -264,7 +362,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.110880
+version 0.110900
 
 =head1 SYNOPSIS
 
@@ -408,6 +506,56 @@ C<$path> in the repository.
   my $file = $repository->file({ path => 'foo', filetype => 'yukki' });
 
 Returns a single L<Yukki::Model::File> object for the given path and filetype.
+
+=head2 log
+
+  my @log = $repository->log( full_path => 'foo.yukk' );
+
+Returns a list of revisions. Each revision is a hash with the following keys:
+
+=over
+
+=item object_id
+
+The object ID of the commit.
+
+=item author_name
+
+The name of the commti author.
+
+=item date
+
+The date the commit was made.
+
+=item time_ago
+
+A string showing how long ago the edit took place.
+
+=item comment
+
+The comment the author made about the comment.
+
+=item lines_added
+
+Number of lines added.
+
+=item lines_removed
+
+Number of lines removed.
+
+=back
+
+=head2 diff_blobs
+
+  my @chunks = $self->diff_blobs('file.yukki', 'a939fe...', 'b7763d...');
+
+Given a file path and two object IDs, returns a list of chunks showing the difference between to revisions of that path. Each chunk is a two element array. The first element is the type of chunk and the second is any detail for that chunk.
+
+The types are:
+
+    "+"    This chunk was added to the second revision.
+    "-"    This chunk was removed in the second revision.
+    " "    This chunk is the same in both revisions.
 
 =head1 AUTHOR
 
