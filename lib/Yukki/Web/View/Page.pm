@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.110900';
+  $Yukki::Web::View::Page::VERSION = '0.111060';
 }
 use 5.12.1;
 use Moose;
@@ -156,6 +156,8 @@ sub edit {
         yukkitext  => $vars->{content},
     });
 
+    $self->page_navigation($ctx->response, 'edit', $vars);
+
     my %attachments;
     if (@{ $vars->{attachments} }) {
         %attachments = (
@@ -240,7 +242,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 DESCRIPTION
 

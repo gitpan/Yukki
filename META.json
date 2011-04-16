@@ -66,9 +66,14 @@
       },
       "test" : {
          "requires" : {
+            "File::Temp" : 0,
+            "IPC::Run3" : 0,
+            "Probe::Perl" : 0,
+            "Sub::Exporter" : 0,
             "Test::Exception" : 0,
             "Test::Moose" : 0,
-            "Test::More" : 0
+            "Test::More" : 0,
+            "Test::Script" : 0
          }
       }
    },
@@ -84,6 +89,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.110900"
+   "version" : "0.111060"
 }
 

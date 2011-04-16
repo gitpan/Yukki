@@ -14,9 +14,14 @@ my %WriteMakefileArgs = (
   'ABSTRACT' => 'Yet Uh-nother wiki',
   'AUTHOR' => 'Andrew Sterling Hanenkamp <hanenkamp@cpan.org>',
   'BUILD_REQUIRES' => {
+    'File::Temp' => '0',
+    'IPC::Run3' => '0',
+    'Probe::Perl' => '0',
+    'Sub::Exporter' => '0',
     'Test::Exception' => '0',
     'Test::Moose' => '0',
-    'Test::More' => '0'
+    'Test::More' => '0',
+    'Test::Script' => '0'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.31',
@@ -73,7 +78,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.110900',
+  'VERSION' => '0.111060',
   'test' => {
     'TESTS' => 't/*.t'
   }

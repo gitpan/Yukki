@@ -83,7 +83,12 @@ skel/root/template/page/history.html
 skel/root/template/page/view.html
 skel/root/template/shell.html
 t/app.t
+t/bin-user-tools.t
+t/bin-yukki-git-init.t
+t/bin-yukki.psgi.t
 t/error.t
+t/lib/Yukki/Test.pm
+t/model-repository.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/test-site/etc/yukki.conf

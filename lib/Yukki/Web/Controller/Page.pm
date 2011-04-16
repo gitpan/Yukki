@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.110900';
+  $Yukki::Web::Controller::Page::VERSION = '0.111060';
 }
 use 5.12.1;
 use Moose;
@@ -266,7 +266,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 DESCRIPTION
 

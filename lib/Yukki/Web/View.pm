@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.110900';
+  $Yukki::Web::View::VERSION = '0.111060';
 }
 use 5.12.1;
 use Moose;
@@ -97,9 +97,14 @@ sub render_page {
         );
     } $ctx->response->navigation_menu;
 
+    my @scripts = $self->app->settings->all_scripts;
+    my @styles  = $self->app->settings->all_styles;
+
     return $self->render(
         template   => 'shell.html',
         vars       => {
+            'head script.local' => [ map { { '@src'  => $_ } } @scripts ],
+            'head link.local'   => [ map { { '@href' => $_ } } @styles ],
             '#messages'   => $messages,
             '.main-title' => $main_title,
             '#navigation .navigation' => [ map { 
@@ -164,6 +169,7 @@ sub yukkilink {
     if (not defined $label) {
         ($label) = $link =~ m{([^/]+)$};
 
+        $link =~ s{([a-zA-Z])'([a-zA-Z])}{$1$2}g; # foo's -> foos, isn't -> isnt
         $link =~ s{[^a-zA-Z0-9-_./]+}{-}g;
         $link =~ s{-+}{-}g;
         $link =~ s{^-}{};
@@ -320,7 +326,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 DESCRIPTION
 

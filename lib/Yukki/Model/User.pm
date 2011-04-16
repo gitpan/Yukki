@@ -1,6 +1,6 @@
 package Yukki::Model::User;
 BEGIN {
-  $Yukki::Model::User::VERSION = '0.110900';
+  $Yukki::Model::User::VERSION = '0.111060';
 }
 use Moose;
 
@@ -36,7 +36,7 @@ Yukki::Model::User - lookup users
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 SYNOPSIS
 

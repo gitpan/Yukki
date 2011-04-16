@@ -1,6 +1,6 @@
 package Yukki::Model;
 BEGIN {
-  $Yukki::Model::VERSION = '0.110900';
+  $Yukki::Model::VERSION = '0.111060';
 }
 use Moose;
 
@@ -26,7 +26,7 @@ Yukki::Model - Base class for model objects
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 DESCRIPTION
 

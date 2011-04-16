@@ -8,9 +8,15 @@ use Git::Repository;
 my $repo_name   = shift;
 my $remote_repo = shift;
 
+die "usage: $0 repository-name [ remote-repository-url ]\n"
+    unless $repo_name;
+
 my $app = Yukki->new;
 
 my $config = $app->settings->{repositories}{ $repo_name };
+
+die qq[Could not find o repository named "$repo_name" in yukki.conf\n]
+    unless $config;
 
 my $repo_dir = ''.$app->locate('repository_path', $config->{repository});
 
@@ -21,7 +27,7 @@ if (defined $remote_repo) {
 
 else {
     my $title  = $config->{name} // ucfirst($repo_name);
-    my $page   = $config->{default_page} // 'main.yukki';
+    my $page   = $config->{default_page} // 'home.yukki';
     my $branch = $config->{site_branch} // 'refs/heads/master';
 
     my $stub_main = <<END_OF_STUB_MAIN;
@@ -36,7 +42,9 @@ END_OF_STUB_MAIN
 
     my $git = Git::Repository->create('init', '--bare', $repo_dir);
 
-    my $object_id = $git->run('hash-object', '-t', 'blob', '-w', '--stdin', '--path', $page, { input => $stub_main });
+    my $object_id = $git->run('hash-object', '-t', 'blob', '-w', '--stdin', "--path=$page", { input => $stub_main });
+
+    warn "HERE\n";
 
     my $stub_tree = "100655 blob $object_id\t$page\n";
     my $tree_id   = $git->run('mktree', { input => $stub_tree });
@@ -64,7 +72,7 @@ yukki-git-init - Initialize a git repository for use with Yukki
 
 =head1 VERSION
 
-version 0.110900
+version 0.111060
 
 =head1 SYNOPSIS
 
