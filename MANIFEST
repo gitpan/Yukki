@@ -16,6 +16,7 @@ lib/Yukki/Error.pm
 lib/Yukki/Manual/Installation.pod
 lib/Yukki/Model.pm
 lib/Yukki/Model/File.pm
+lib/Yukki/Model/FilePreview.pm
 lib/Yukki/Model/Repository.pm
 lib/Yukki/Model/User.pm
 lib/Yukki/Role/App.pm
@@ -28,6 +29,12 @@ lib/Yukki/Web/Controller/Attachment.pm
 lib/Yukki/Web/Controller/Login.pm
 lib/Yukki/Web/Controller/Page.pm
 lib/Yukki/Web/Controller/Redirect.pm
+lib/Yukki/Web/Plugin.pm
+lib/Yukki/Web/Plugin/Attachment.pm
+lib/Yukki/Web/Plugin/Role/FormatHelper.pm
+lib/Yukki/Web/Plugin/Role/Formatter.pm
+lib/Yukki/Web/Plugin/Spreadsheet.pm
+lib/Yukki/Web/Plugin/YukkiText.pm
 lib/Yukki/Web/Request.pm
 lib/Yukki/Web/Response.pm
 lib/Yukki/Web/Router.pm

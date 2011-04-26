@@ -36,6 +36,7 @@ requires:
   JSON: 0
   LWP::MediaTypes: 0
   List::MoreUtils: 0
+  List::Util: 0
   Moose: 0
   Moose::Role: 0
   Moose::Util::TypeConstraints: 0
@@ -44,6 +45,7 @@ requires:
   MooseX::Types::Moose: 0
   MooseX::Types::Path::Class: 0
   MooseX::Types::Structured: 0
+  MooseX::Types::URI: 0
   Number::Bytes::Human: 0
   Path::Class: 0
   Path::Router: 0
@@ -53,6 +55,7 @@ requires:
   Plack::Response: 0
   Plack::Session::Store::Cache: 0
   Scalar::Util: 0
+  Spreadsheet::Engine: 0
   Template::Semantic: 0
   Text::MultiMarkdown: 0
   Throwable::Error: 0
@@ -65,4 +68,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.111060
+version: 0.111160

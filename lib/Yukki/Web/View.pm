@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.111060';
+  $Yukki::Web::View::VERSION = '0.111160';
 }
 use 5.12.1;
 use Moose;
@@ -8,9 +8,10 @@ use Moose;
 use MooseX::Params::Validate;
 use Path::Class;
 use Scalar::Util qw( blessed reftype );
+use Spreadsheet::Engine;
 use Template::Semantic;
 use Text::MultiMarkdown;
-use URI::Escape qw( uri_escape );
+use Try::Tiny;
 use XML::Twig;
 
 # ABSTRACT: base class for Yukki::Web views
@@ -100,21 +101,23 @@ sub render_page {
     my @scripts = $self->app->settings->all_scripts;
     my @styles  = $self->app->settings->all_styles;
 
+    my $b = sub { $ctx->rebase_url($_[0]) };
+
     return $self->render(
         template   => 'shell.html',
         vars       => {
-            'head script.local' => [ map { { '@src'  => $_ } } @scripts ],
-            'head link.local'   => [ map { { '@href' => $_ } } @styles ],
+            'head script.local' => [ map { { '@src'  => $b->($_) } } @scripts ],
+            'head link.local'   => [ map { { '@href' => $b->($_) } } @styles ],
             '#messages'   => $messages,
             '.main-title' => $main_title,
             '#navigation .navigation' => [ map { 
-                { 'a' => $_->{label}, 'a@href' => $_->{href} },
+                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
             } @nav_menu ],
             '#bottom-navigation .navigation' => [ map { 
-                { 'a' => $_->{label}, 'a@href' => $_->{href} },
+                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
             } @nav_menu ],
             '#breadcrumb li' => [ map {
-                { 'a' => $_->{label}, 'a@href' => $_->{href} },
+                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
             } $ctx->response->breadcrumb_links ],
             '#content'    => $self->render(template => $template, vars => $vars),
         },
@@ -123,15 +126,18 @@ sub render_page {
 
 
 sub render_links {
-    my ($self, $links) = validated_list(\@_,
+    my ($self, $ctx, $links) = validated_list(\@_,
+        context  => { isa => 'Yukki::Web::Context' },
         links    => { isa => 'ArrayRef[HashRef]' },
     );
+
+    my $b = sub { $ctx->rebase_url($ctx, $_[0]) };
 
     return $self->render(
         template => 'links.html',
         vars     => {
             'li' => [ map {
-                { 'a' => $_->{label}, 'a@href' => $_->{href} },
+                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
             } @$links ],
         },        
     );
@@ -149,172 +155,6 @@ sub render {
     return $self->semantic->process($template_file, $vars);
 }
 
-
-sub yukkilink {
-    my ($self, $params) = @_;
-
-    my $repository = $params->{repository};
-    my $link       = $params->{link};
-    my $label      = $params->{label};
-
-    $link =~ s/^\s+//; $link =~ s/\s+$//;
-
-    my ($repo_name, $local_link) = split /:/, $link, 2 if $link =~ /:/;
-    if (defined $repo_name and defined $self->app->settings->{repositories}{$repo_name}) {
-        $repository = $repo_name;
-        $link       = $local_link;
-    }
-    
-    # If we did not get a label, make the label into the link
-    if (not defined $label) {
-        ($label) = $link =~ m{([^/]+)$};
-
-        $link =~ s{([a-zA-Z])'([a-zA-Z])}{$1$2}g; # foo's -> foos, isn't -> isnt
-        $link =~ s{[^a-zA-Z0-9-_./]+}{-}g;
-        $link =~ s{-+}{-}g;
-        $link =~ s{^-}{};
-        $link =~ s{-$}{};
-
-        $link .= '.yukki';
-    }
-
-    my @base_name;
-    if ($params->{page}) {
-        $base_name[0] = $params->{page};
-        $base_name[0] =~ s/\.yukki$//g;
-    }
-
-    $link = join '/', @base_name, $link if $link =~ m{^\./};
-    $link =~ s{^/}{};
-    $link =~ s{/\./}{/}g;
-
-    $label =~ s/^\s*//; $label =~ s/\s*$//;
-
-    my $file = $self->model('Repository', { name => $repository })->file({ full_path => $link });
-    my $class = $file->exists ? 'exists' : 'not-exists';
-    return qq{<a class="$class" href="/page/view/$repository/$link">$label</a>};
-}
-
-
-sub yukkiplugin {
-    my ($self, $params) = @_;
-
-    my $plugin_name = $params->{plugin_name};
-    my $arg         = $params->{arg};
-
-    # TODO Not very pluggable yet
-    return "{{$plugin_name:$arg}}" unless $plugin_name eq 'attachment';
-
-    if ($arg =~ m{
-
-            ^\s*
-
-                (?: ([\w]+) : )?    # repository: is optional
-                (.+)                # link/to/page is mandatory
-
-            \s*$
-
-            }x) {
-
-        my $repository = $1 // $params->{repository};
-        my $page       = $params->{page};
-        my $link       = $2;
-
-        $link =~ s/^\s+//; $link =~ s/\s+$//;
-
-        $page =~ s{\.yukki$}{};
-        $link = join "/", map { uri_escape($_) } split m{/}, $link;
-
-        if ($link =~ m{^/}) {
-            return "/attachment/view/$repository$link";
-        }
-        else {
-            return "/attachment/view/$repository/$page/$link";
-        }
-    }
-    
-    return "{{$plugin_name:$arg}}";
-}
-
-
-sub yukkitext {
-    my ($self, $params) = @_;
-
-    my $repository = $params->{repository};
-    my $yukkitext  = $params->{yukkitext};
-
-    # Yukki Links
-    $yukkitext =~ s{ 
-        (?<!\\)                 # \ will escape the link
-        \[\[ \s*                # [[ to start it
-
-            (?: ([\w]+) : )?    # repository: is optional
-            ([^|\]]+) \s*       # link/to/page is mandatory
-
-            (?: \|              # | to split link from label
-                ([^\]]+)        # a pretty label (needs trimming)
-            )?                  # is optional
-
-        \]\]                    # ]] to end
-    }{ 
-        $self->yukkilink({ 
-            %$params, 
-            
-            repository => $1 // $repository, 
-            link       => $2, 
-            label      => $3,
-        });
-    }xeg;
-
-    # Handle escaped links, hide the escape
-    $yukkitext =~ s{ 
-        \\                      # \ will escape the link
-        (\[\[ \s*               # [[ to start it
-
-            (?: [\w]+ : )?      # repository: is optional
-            [^|\]]+ \s*         # link/to/page is mandatory
-
-            (?: \|              # | to split link from label
-                [^\]]+          # a pretty label (needs trimming)
-            )?                  # is optional
-
-        \]\])                    # ]] to end
-    }{$1}gx;
-
-    # Yukki Plugins
-    $yukkitext =~ s{
-        (?<!\\)                 # \ will escape the plugin
-        \{\{ \s*                # {{ to start it
-
-            ([\w]+) :           # plugin_name: is required
-
-            (.*)                # plugin arguments
-
-        \}\}                    # }} to end
-    }{
-        $self->yukkiplugin({
-            %$params,
-
-            plugin_name => $1,
-            arg         => $2,
-        });
-    }xeg;
-
-    # Handle the escaped plugin thing
-    $yukkitext =~ s{
-        \\                      # \ will escape the plugin
-        (\{\{ \s*               # {{ to start it
-
-            [\w]+ :             # plugin_name: is required
-
-            .*                  # plugin arguments
-
-        \}\})                   # }} to end
-    }{$1}xg;
-
-    return '<div>' . $self->format_markdown($yukkitext) . '</div>';
-}
-
 1;
 
 __END__
@@ -326,7 +166,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.111060
+version 0.111160
 
 =head1 DESCRIPTION
 
@@ -381,29 +221,6 @@ This renders a set of links using the F<links.html> template.
 
 This renders the named template using L<Template::Semantic>. The C<vars> are
 used as the ones passed to the C<process> method.
-
-=head2 yukkilink
-
-Used to help render yukkilinks. Do not use.
-
-=head2 yukkiplugin
-
-Used to render plugged in markup. Do not use.
-
-=head2 yukkitext
-
-  my $html = $view->yukkitext({
-      repository => $repository_name,
-      yukkitext  => $yukkitext,
-  });
-
-Yukkitext is markdown plus some extra stuff. The extra stuff is:
-
-  [[ main:/link/to/page.yukki | Link Title ]] - wiki link
-  [[ /link/to/page.yukki | Link Title ]]      - wiki link
-  [[ /link/to/page.yukki ]]                   - wiki link
-
-  {{attachment:file.pdf}}                     - attachment URL
 
 =head1 AUTHOR
 

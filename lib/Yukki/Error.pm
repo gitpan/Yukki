@@ -1,6 +1,6 @@
 package Yukki::Error;
 BEGIN {
-  $Yukki::Error::VERSION = '0.111060';
+  $Yukki::Error::VERSION = '0.111160';
 }
 use Moose;
 
@@ -20,7 +20,7 @@ Yukki::Error - Yukki's exception class
 
 =head1 VERSION
 
-version 0.111060
+version 0.111160
 
 =head1 SYNOPSIS
 

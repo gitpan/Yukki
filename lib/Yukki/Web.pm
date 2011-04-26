@@ -1,18 +1,20 @@
 package Yukki::Web;
 BEGIN {
-  $Yukki::Web::VERSION = '0.111060';
+  $Yukki::Web::VERSION = '0.111160';
 }
 use Moose;
 
 extends qw( Yukki );
 
 use Yukki::Error;
+use Yukki::Types qw( PluginList );
 use Yukki::Web::Context;
 use Yukki::Web::Router;
 use Yukki::Web::Settings;
 
 use CHI;
 use HTTP::Throwable::Factory qw( http_throw http_exception );
+use LWP::MediaTypes qw( add_type );
 use Plack::Session::Store::Cache;
 use Scalar::Util qw( blessed );
 use Try::Tiny;
@@ -34,6 +36,53 @@ sub _build_router {
     my $self = shift;
     Yukki::Web::Router->new( app => $self );
 }
+
+
+has plugins => (
+    is          => 'ro',
+    isa         => PluginList,
+    required    => 1,
+    lazy_build  => 1,
+    traits      => [ 'Array' ],
+    handles     => {
+        all_plugins              => 'elements',
+        format_helper_plugins => [ grep => sub { 
+            $_->does('Yukki::Web::Plugin::Role::FormatHelper')
+        } ],
+        formatter_plugins => [ grep => sub { 
+            $_->does('Yukki::Web::Plugin::Role::Formatter')
+        } ],
+    },
+);
+
+sub _build_plugins {
+    my $self = shift;
+
+    my @plugins;
+    for my $plugin_settings (@{ $self->settings->plugins }) {
+        my $module = $plugin_settings->{module};
+
+        my $class  = $module;
+           $class  = "Yukki::Web::Plugin::$class" unless $class =~ s/^\+//;
+
+        Class::MOP::load_class($class);
+
+        push @plugins, $class->new(%$plugin_settings, app => $self);
+    }
+
+    return \@plugins;
+}
+
+
+sub BUILD {
+    my $self = shift;
+
+    my $types = $self->settings->media_types;
+    while (my ($mime_type, $ext) = each %$types) {
+        my @ext = ref $ext ? @$ext : ($ext);
+        add_type($mime_type, @ext);
+    }
+};
 
 
 sub component {
@@ -58,6 +107,9 @@ sub view {
 
 sub dispatch {
     my ($self, $env) = @_;
+
+    $env->{'yukki.app'}      = $self;
+    $env->{'yukki.settings'} = $self->settings;
 
     my $ctx = Yukki::Web::Context->new(env => $env);
     my $response;
@@ -149,6 +201,24 @@ sub session_middleware {
     );
 }
 
+
+sub munge_label {
+    my ($self, $link) = @_;
+
+    $link =~ m{([^/]+)$};
+
+    $link =~ s{([a-zA-Z])'([a-zA-Z])}{$1$2}g; # foo's -> foos, isn't -> isnt
+    $link =~ s{[^a-zA-Z0-9-_./]+}{-}g;
+    $link =~ s{-+}{-}g;
+    $link =~ s{^-}{};
+    $link =~ s{-$}{};
+
+    $link .= '.yukki';
+
+    return $link;
+}
+
+
 1;
 
 __END__
@@ -160,7 +230,7 @@ Yukki::Web - the Yukki web server
 
 =head1 VERSION
 
-version 0.111060
+version 0.111160
 
 =head1 DESCRIPTION
 
@@ -173,6 +243,14 @@ controllers.
 
 This is the L<Path::Router> that will determine where incoming requests are
 sent. It is automatically set to a L<Yukki::Web::Router> instance.
+
+=head2 plugins
+
+  my @plugins        = $app->all_plugins;
+  my @format_helpers = $app->format_helper_plugins;
+  my @formatters     = $app->format_plugins;
+
+This attribute stores all the loaded plugins.
 
 =head1 METHODS
 
@@ -205,6 +283,14 @@ it returns a PSGI response.
   enable $app->session_middleware;
 
 Returns the setup for the PSGI session middleware.
+
+=head2 munge_label
+
+  my $link = $app->munch_label("This is a label");
+
+Turns some label into a link slug using the standard means for doing so.
+
+=for Pod::Coverage   BUILD
 
 =head1 AUTHOR
 

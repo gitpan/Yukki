@@ -36,6 +36,7 @@
             "JSON" : 0,
             "LWP::MediaTypes" : 0,
             "List::MoreUtils" : 0,
+            "List::Util" : 0,
             "Moose" : 0,
             "Moose::Role" : 0,
             "Moose::Util::TypeConstraints" : 0,
@@ -44,6 +45,7 @@
             "MooseX::Types::Moose" : 0,
             "MooseX::Types::Path::Class" : 0,
             "MooseX::Types::Structured" : 0,
+            "MooseX::Types::URI" : 0,
             "Number::Bytes::Human" : 0,
             "Path::Class" : 0,
             "Path::Router" : 0,
@@ -53,6 +55,7 @@
             "Plack::Response" : 0,
             "Plack::Session::Store::Cache" : 0,
             "Scalar::Util" : 0,
+            "Spreadsheet::Engine" : 0,
             "Template::Semantic" : 0,
             "Text::MultiMarkdown" : 0,
             "Throwable::Error" : 0,
@@ -89,6 +92,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.111060"
+   "version" : "0.111160"
 }
 

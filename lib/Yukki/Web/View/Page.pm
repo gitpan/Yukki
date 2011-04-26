@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.111060';
+  $Yukki::Web::View::Page::VERSION = '0.111160';
 }
 use 5.12.1;
 use Moose;
@@ -37,7 +37,7 @@ sub page_navigation {
 
         $response->add_navigation_item({
             label => ucfirst $action,
-            href  => join('/', '/page', $action, $vars->{repository}, $vars->{page}),
+            href  => join('/', 'page', $action, $vars->{repository}, $vars->{page}),
             sort  => undef,
         });
     }
@@ -46,15 +46,12 @@ sub page_navigation {
 
 sub view {
     my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
 
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
-    my $html = $self->yukkitext({
-        page       => $vars->{page},
-        repository => $vars->{repository},
-        yukkitext  => $vars->{content},
-    });
+    my $html = $file->fetch_formatted($ctx);
 
     $self->page_navigation($ctx->response, 'view', $vars);
 
@@ -112,6 +109,7 @@ sub history {
 
 sub diff {
     my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
 
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
@@ -128,11 +126,7 @@ sub diff {
         }
     }
 
-    my $html = $self->yukkitext({
-        page       => $vars->{page},
-        repository => $vars->{repository},
-        yukkitext  => $diff,
-    });
+    my $html = $file->fetch_formatted($ctx);
 
     return $self->render_page(
         template => 'page/diff.html',
@@ -146,15 +140,12 @@ sub diff {
 
 sub edit {
     my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
 
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
-    my $html = $self->yukkitext({
-        page       => $vars->{page},
-        repository => $vars->{repository},
-        yukkitext  => $vars->{content},
-    });
+    my $html = $file->fetch_formatted($ctx);
 
     $self->page_navigation($ctx->response, 'edit', $vars);
 
@@ -162,7 +153,7 @@ sub edit {
     if (@{ $vars->{attachments} }) {
         %attachments = (
             '#attachments-list@class' => 'attachment-list',
-            '#attachments-list'       => $self->attachments($vars->{attachments}),
+            '#attachments-list'       => $self->attachments($ctx, $vars->{attachments}),
         );
     }
 
@@ -171,7 +162,7 @@ sub edit {
         context  => $ctx,
         vars     => {
             '#yukkiname'              => $vars->{page},
-            '#yukkitext'              => $vars->{content} // '',
+            '#yukkitext'              => scalar $vars->{file}->fetch // '',
             '#preview-yukkitext'      => \$html,
             %attachments,
         },
@@ -180,7 +171,7 @@ sub edit {
 
 
 sub attachments {
-    my ($self, $attachments) = @_;
+    my ($self, $ctx, $attachments) = @_;
 
     return $self->render(
         template   => 'page/attachments.html',
@@ -189,7 +180,7 @@ sub attachments {
                 './@id'     => $_->file_id,
                 '.filename' => $_->file_name,
                 '.size'     => $_->formatted_file_size,
-                '.action'   => $self->attachment_links($_),
+                '.action'   => $self->attachment_links($ctx, $_),
             } } @$attachments ],
         },
     );
@@ -197,7 +188,7 @@ sub attachments {
 
 
 sub attachment_links {
-    my ($self, $attachment) = @_;
+    my ($self, $ctx, $attachment) = @_;
 
     my @links;
 
@@ -215,18 +206,15 @@ sub attachment_links {
                  $attachment->full_path),
     };
 
-    return $self->render_links(links => \@links);
+    return $self->render_links(context => $ctx, links => \@links);
 }
 
 
 sub preview {
     my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
 
-    my $html = $self->yukkitext({
-        page       => $vars->{page},
-        repository => $vars->{repository},
-        yukkitext  => $vars->{content},
-    });
+    my $html = $file->fetch_formatted($ctx);
 
     return $html;
 }
@@ -242,7 +230,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.111060
+version 0.111160
 
 =head1 DESCRIPTION
 

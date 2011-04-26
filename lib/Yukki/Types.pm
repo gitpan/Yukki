@@ -1,18 +1,23 @@
 package Yukki::Types;
 BEGIN {
-  $Yukki::Types::VERSION = '0.111060';
+  $Yukki::Types::VERSION = '0.111160';
 }
+use 5.12.1;
 use Moose;
 
 use MooseX::Types -declare => [ qw(
     LoginName AccessLevel NavigationLinks
-    BreadcrumbLinks RepositoryMap
+    BaseURL BaseURLEnum BreadcrumbLinks RepositoryMap
+    PluginConfig PluginList
 ) ];
 
 use MooseX::Types::Moose qw( Str Int ArrayRef Maybe HashRef );
 use MooseX::Types::Structured qw( Dict );
+use MooseX::Types::URI qw( Uri );
 
 use Email::Address;
+use List::Util qw( first );
+use List::MoreUtils qw( all );
 
 # ABSTRACT: standard types for use in Yukki
 
@@ -36,6 +41,11 @@ subtype NavigationLinks,
     ];
 
 
+enum BaseURLEnum, qw( SCRIPT_NAME REWRITE );
+
+subtype BaseURL, as BaseURLEnum|Uri;
+
+
 subtype BreadcrumbLinks,
     as ArrayRef[
         Dict[
@@ -56,6 +66,23 @@ coerce RepositoryMap,
             map { $_ => Yukki::Settings::Repository->new($source->{$_}) }
                 keys %$source
         }
+    };
+
+
+subtype PluginConfig,
+    as ArrayRef[HashRef],
+    where { all { defined $_->{module} } @$_ };
+
+
+class_type 'Yukki::Web::Plugin';
+subtype PluginList,
+    as ArrayRef['Yukki::Web::Plugin'],
+    message { 
+        return 'It is not an array of objects.' unless ref $_ eq 'ARRAY';
+        my $bad = first { not blessed $_ or not $_->isa('Yukki::Web::Plugin') }
+                        @$_;
+        $bad = blessed $bad if blessed $bad;
+        return "It contains $bad, which is not a Yukki::Web::Plugin.";
     };
 
 
@@ -82,7 +109,6 @@ coerce 'Yukki::Settings::Anonymous',
     from HashRef,
     via { Yukki::Settings::Anonymous->new($_) };
 
-
 1;
 
 __END__
@@ -94,7 +120,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.111060
+version 0.111160
 
 =head1 SYNOPSIS
 
@@ -131,9 +157,13 @@ THis is an array of hashes formatted like:
       sort  => 40,
   }
 
+=head2 BaseURL
+
+This is either an absolute URL or the words C<SCRIPT_NAME> or C<REWRITE>.
+
 =head2 BreadcrumbLinks
 
-THis is an array of hashes formatted like:
+This is an array of hashes formatted like:
 
   {
       label => 'Label',
@@ -143,6 +173,14 @@ THis is an array of hashes formatted like:
 =head2 RepositoryMap
 
 This is a hash of L<Yukki::Settings::Repository> objects.
+
+=head2 PluginConfig
+
+A plugin configuration is an array of hashes. Each hash must have at least one key named "module" defined.
+
+=head2 PluginList
+
+A plugin list is a loaded set of plugin objects.
 
 =head1 COERCIONS
 
