@@ -1,6 +1,6 @@
 package Yukki::Web::View::Login;
 BEGIN {
-  $Yukki::Web::View::Login::VERSION = '0.111160';
+  $Yukki::Web::View::Login::VERSION = '0.111280';
 }
 use Moose;
 
@@ -15,6 +15,9 @@ sub page {
     return $self->render_page(
         template   => 'login/page.html', 
         context    => $ctx,
+        vars       => {
+            'form@action' => $ctx->rebase_url('login/submit'),
+        },
     );
 }
 
@@ -29,7 +32,7 @@ Yukki::Web::View::Login - show a login form
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 

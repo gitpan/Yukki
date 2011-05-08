@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.111160';
+  $Yukki::Web::View::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -131,7 +131,7 @@ sub render_links {
         links    => { isa => 'ArrayRef[HashRef]' },
     );
 
-    my $b = sub { $ctx->rebase_url($ctx, $_[0]) };
+    my $b = sub { $ctx->rebase_url($_[0]) };
 
     return $self->render(
         template => 'links.html',
@@ -166,7 +166,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 

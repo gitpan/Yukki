@@ -1,6 +1,6 @@
 package Yukki::Types;
 BEGIN {
-  $Yukki::Types::VERSION = '0.111160';
+  $Yukki::Types::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -35,7 +35,7 @@ subtype NavigationLinks,
     as ArrayRef[
         Dict[
             label => Str,
-            href  => Str,
+            href  => Str|Uri,
             sort  => Maybe[Int],
         ],
     ];
@@ -120,7 +120,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 SYNOPSIS
 

@@ -1,13 +1,13 @@
 package Yukki::Web::Controller::Login;
 BEGIN {
-  $Yukki::Web::Controller::Login::VERSION = '0.111160';
+  $Yukki::Web::Controller::Login::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
 
 extends 'Yukki::Web::Controller';
 
-use HTTP::Throwable::Factory qw( http_throw );
+use Yukki::Error qw( http_throw );
 
 # ABSTRACT: shows the login page and handles login
 
@@ -20,7 +20,9 @@ sub fire {
         when ('page')   { $self->show_login_page($ctx) }
         when ('submit') { $self->check_login_submission($ctx) }
         when ('exit')   { $self->logout($ctx) }
-        default         { http_throw('NotFound') }
+        default         { http_throw('That login action does not exist.', {
+            status => 'NotFound',
+        }) }
     }
 }
 
@@ -64,7 +66,7 @@ sub check_login_submission {
     else {
         $ctx->session->{user} = $user;
 
-        $ctx->response->redirect('/page/view/main');
+        $ctx->response->redirect($ctx->rebase_url('page/view/main'));
         return;
     }
 }
@@ -74,7 +76,7 @@ sub logout {
     my ($self, $ctx) = @_;
 
     $ctx->session_options->{expire} = 1;
-    $ctx->response->redirect('/page/view/main');
+    $ctx->response->redirect($ctx->rebase_url('page/view/main'));
 }
 
 1;
@@ -88,7 +90,7 @@ Yukki::Web::Controller::Login - shows the login page and handles login
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 

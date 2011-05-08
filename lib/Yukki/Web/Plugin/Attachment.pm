@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Attachment;
 BEGIN {
-  $Yukki::Web::Plugin::Attachment::VERSION = '0.111160';
+  $Yukki::Web::Plugin::Attachment::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -73,7 +73,7 @@ Yukki::Web::Plugin::Attachment - plugin for attachments
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 SYNOPSIS
 

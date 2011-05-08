@@ -1,6 +1,6 @@
 package Yukki::Settings;
 BEGIN {
-  $Yukki::Settings::VERSION = '0.111160';
+  $Yukki::Settings::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -65,7 +65,7 @@ has repositories => (
 {
     package Yukki::Settings::Anonymous;
 BEGIN {
-  $Yukki::Settings::Anonymous::VERSION = '0.111160';
+  $Yukki::Settings::Anonymous::VERSION = '0.111280';
 }
     use Moose;
 
@@ -88,7 +88,7 @@ BEGIN {
 {
     package Yukki::Settings::Repository;
 BEGIN {
-  $Yukki::Settings::Repository::VERSION = '0.111160';
+  $Yukki::Settings::Repository::VERSION = '0.111280';
 }
     use Moose;
 
@@ -153,7 +153,7 @@ Yukki::Settings - provides structure and validation to settings in yukki.conf
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 

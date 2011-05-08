@@ -1,13 +1,13 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.111160';
+  $Yukki::Web::Controller::Page::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
 
 extends 'Yukki::Web::Controller';
 
-use HTTP::Throwable::Factory qw( http_throw );
+use Yukki::Error qw( http_throw );
 
 # ABSTRACT: controller for viewing and editing pages
 
@@ -23,7 +23,9 @@ sub fire {
         when ('preview') { $self->preview_page($ctx) }
         when ('attach')  { $self->upload_attachment($ctx) }
         default {
-            http_throw('NotFound');
+            http_throw('That page action does not exist.', {
+                status => 'NotFound',
+            });
         }
     }
 }
@@ -75,11 +77,14 @@ sub view_page {
 
     my $body;
     if (not $page->exists) {
+        my @files = $page->list_files;
+
         $body = $self->view('Page')->blank($ctx, { 
             title      => $page->file_name,
             breadcrumb => $breadcrumb,
             repository => $repo_name, 
             page       => $page->full_path,
+            files      => \@files,
         });
     }
 
@@ -124,7 +129,7 @@ sub edit_page {
         return;
     }
 
-    my @attachments = grep { $_->filetype ne 'yukki' } $page->list_files($page->path);
+    my @attachments = grep { $_->filetype ne 'yukki' } $page->list_files;
 
     $ctx->response->body( 
         $self->view('Page')->edit($ctx, { 
@@ -264,7 +269,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 

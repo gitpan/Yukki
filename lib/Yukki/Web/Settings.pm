@@ -1,6 +1,6 @@
 package Yukki::Web::Settings;
 BEGIN {
-  $Yukki::Web::Settings::VERSION = '0.111160';
+  $Yukki::Web::Settings::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -47,8 +47,7 @@ has scripts => (
         [ qw(
             script/lib/jquery/jquery.js
             script/lib/jquery/jquery-ui.js
-            script/lib/plupload/gears_init.js
-            script/lib/plupload/plupload.full.min.js
+            script/lib/plupload/plupload.full.js
             script/lib/sha1/sha1.js
             script/yukki.js
         ) ]
@@ -107,7 +106,7 @@ Yukki::Web::Settings - provides structure and validation to web settings in yukk
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 DESCRIPTION
 
@@ -139,8 +138,7 @@ shell template. If not set, the defaults are:
   scripts:
       - script/lib/jquery/jquery.js
       - script/lib/jquery/jquery-ui.js
-      - script/lib/plupload/gears_init.js
-      - script/lib/plupload/plupload.full.min.js
+      - script/lib/plupload/plupload.full.js
       - script/lib/sha1/sha1.js
       - script/yukki.js
 

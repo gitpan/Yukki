@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.111160';
+  $Yukki::Model::File::VERSION = '0.111280';
 }
 use 5.12.1;
 use Moose;
@@ -44,7 +44,6 @@ has repository => (
         'commit_tree'         => 'commit_tree',
         'update_root'         => 'update_root',
         'find_path'           => 'find_path',
-        'list_files'          => 'list_files',
         'fetch_size'          => 'fetch_size',
         'repository_name'     => 'name',
         'author_name'         => 'author_name',
@@ -204,6 +203,7 @@ sub fetch {
 
 sub has_format {
     my ($self, $media_type) = @_;
+    $media_type //= $self->media_type;
 
     my @formatters = $self->app->formatter_plugins;
     for my $formatter (@formatters) {
@@ -255,6 +255,12 @@ sub file_preview {
     );
 }
 
+
+sub list_files {
+    my ($self) = @_;
+    return $self->repository->list_files($self->path);
+}
+
 1;
 
 __END__
@@ -266,7 +272,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.111160
+version 0.111280
 
 =head1 SYNOPSIS
 
@@ -435,6 +441,12 @@ The types are:
   );
 
 Takes this file and returns a L<Yukki::Model::FilePreview> object, with the file contents "replaced" by the given content.
+
+=head2 list_files
+
+  my @files = $self->list_files;
+
+List the files attached to/under this file path.
 
 =head1 AUTHOR
 
