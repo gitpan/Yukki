@@ -4,7 +4,7 @@ use warnings;
 
 BEGIN { require 5.12.1; }
 
-use ExtUtils::MakeMaker 6.31;
+use ExtUtils::MakeMaker 6.30;
 
 use File::ShareDir::Install;
 install_share module => "Yukki::Web", "skel";
@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
     'Test::Script' => '0'
   },
   'CONFIGURE_REQUIRES' => {
-    'ExtUtils::MakeMaker' => '6.31',
+    'ExtUtils::MakeMaker' => '6.30',
     'File::ShareDir::Install' => '0.03'
   },
   'DISTNAME' => 'Yukki',
@@ -82,7 +82,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.111280',
+  'VERSION' => '0.111660',
   'test' => {
     'TESTS' => 't/*.t'
   }

@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::YukkiText;
 BEGIN {
-  $Yukki::Web::Plugin::YukkiText::VERSION = '0.111280';
+  $Yukki::Web::Plugin::YukkiText::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -39,6 +39,7 @@ sub _build_markdown {
     Text::MultiMarkdown->new(
         markdown_in_html_blocks => 1,
         heading_ids             => 0,
+        strip_metadata          => 1,
     );
 }
 
@@ -128,8 +129,12 @@ sub yukkitext {
     my ($self, $params) = @_;
 
     my $file       = $params->{file};
+    my $position   = 0 + ($params->{position} // -1);
     my $repository = $file->repository_name;
     my $yukkitext  = $file->fetch;
+
+    $yukkitext =~ s[(.{$position}.*?)$][$1<span id="yukkitext-caret">&nbsp;</span>]sm
+        if $position >= 0;
 
     # Yukki Links
     $yukkitext =~ s{ 
@@ -200,7 +205,13 @@ sub yukkitext {
         \}\})                   # }} to end
     }{$1}xg;
 
-    return '<div>' . $self->format_markdown($yukkitext) . '</div>';
+    my $formatted = '<div>' . $self->format_markdown($yukkitext) . '</div>';
+
+    # Just in case markdown mangled the caret marker:
+    $formatted =~ s[&lt;span id="yukkitext-caret"&gt;&amp;nbsp;&lt;/span&gt;]
+                   [<span id="yukkitext-caret">&nbsp</span>];
+
+    return $formatted;
 }
 
 1;
@@ -214,7 +225,7 @@ Yukki::Web::Plugin::YukkiText - format text/yukki files using markdown, etc.
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 SYNOPSIS
 

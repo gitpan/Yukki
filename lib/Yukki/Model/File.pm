@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.111280';
+  $Yukki::Model::File::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -215,7 +215,8 @@ sub has_format {
 
 
 sub fetch_formatted {
-    my ($self, $ctx) = @_;
+    my ($self, $ctx, $position) = @_;
+    $position //= 0;
 
     my $media_type = $self->media_type;
 
@@ -224,6 +225,7 @@ sub fetch_formatted {
         return $plugin->format({
             context    => $ctx,
             file       => $self,
+            position   => $position,
         }) if $plugin->has_format($media_type);
     }
 
@@ -272,7 +274,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 SYNOPSIS
 

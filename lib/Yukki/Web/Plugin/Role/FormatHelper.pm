@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Role::FormatHelper;
 BEGIN {
-  $Yukki::Web::Plugin::Role::FormatHelper::VERSION = '0.111280';
+  $Yukki::Web::Plugin::Role::FormatHelper::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose::Role;
@@ -20,7 +20,7 @@ Yukki::Web::Plugin::Role::FormatHelper - interface for quick format helpers
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 SYNOPSIS
 

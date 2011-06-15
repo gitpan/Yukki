@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin;
 BEGIN {
-  $Yukki::Web::Plugin::VERSION = '0.111280';
+  $Yukki::Web::Plugin::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -26,7 +26,7 @@ Yukki::Web::Plugin - base class for Yukki plugins
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package Yukki::Web::Settings;
 BEGIN {
-  $Yukki::Web::Settings::VERSION = '0.111280';
+  $Yukki::Web::Settings::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -47,6 +47,7 @@ has scripts => (
         [ qw(
             script/lib/jquery/jquery.js
             script/lib/jquery/jquery-ui.js
+            script/lib/jquery/jquery-fieldselection.js
             script/lib/plupload/plupload.full.js
             script/lib/sha1/sha1.js
             script/yukki.js
@@ -72,6 +73,30 @@ has styles => (
     handles     => {
         all_styles => 'elements',
     },
+);
+
+
+has page_views => (
+    is          => 'ro',
+    isa         => 'HashRef[HashRef]',
+    required    => 1,
+    default     => sub { +{
+        default => {
+            label    => 'View',
+            sort     => 10,
+            template => 'shell.html',
+        },
+        slides => {
+            label    => 'Slides',
+            sort     => 11,
+            template => 'slides.html',
+            hide     => 1,
+            vars     => {
+                "head link.local"   => [ qw( style/slides.css ) ],
+                "head script.local" => [ qw( script/slides.js ) ],
+            },
+        },
+    } },
 );
 
 
@@ -106,7 +131,7 @@ Yukki::Web::Settings - provides structure and validation to web settings in yukk
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 DESCRIPTION
 
@@ -138,6 +163,7 @@ shell template. If not set, the defaults are:
   scripts:
       - script/lib/jquery/jquery.js
       - script/lib/jquery/jquery-ui.js
+      - script/lib/jquery/jquery-fieldselection.js
       - script/lib/plupload/plupload.full.js
       - script/lib/sha1/sha1.js
       - script/yukki.js
@@ -149,6 +175,26 @@ shell template. If not set, the defaults are:
 As you can see, these are full paths and may be given as paths to foreign hosts.
 In order to keep Yukki working in good order, you will probaby want to include
 at least the scripts listed above.
+
+=head2 page_views
+
+This is the list of page views to provide. By default, this is
+
+  page_views:
+      default:
+          label: View
+          sort: 10
+          template: shell.html
+      slides:
+          label: Slides
+          sort: 11
+          template: slides.html
+          hide: 1
+          vars:
+              "head link.local":
+                  - style/slides.css
+              "head script.local": 
+                  - script/slides.js
 
 =head2 plugins
 

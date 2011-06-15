@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.111280';
+  $Yukki::Web::View::Page::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -33,13 +33,29 @@ sub blank {
 sub page_navigation {
     my ($self, $response, $this_action, $vars) = @_;
 
-    for my $action (qw( view edit history )) {
+    for my $action (qw( edit history )) {
         next if $action eq $this_action;
 
         $response->add_navigation_item({
             label => ucfirst $action,
             href  => join('/', 'page', $action, $vars->{repository}, $vars->{page}),
-            sort  => undef,
+            sort  => 20,
+        });
+    }
+
+    for my $view_name (keys %{ $self->app->settings->page_views }) {
+        my $view_info = $self->app->settings->page_views->{$view_name};
+
+        next if $view_info->{hide};
+
+        my $args = "?view=$view_name";
+           $args = '' if $view_name eq 'default';
+
+        $response->add_navigation_item({
+            label => $view_info->{label},
+            href  => join('/', 'page/view', $vars->{repository}, $vars->{page})
+                   . $args,
+            sort  => $view_info->{sort},
         });
     }
 }
@@ -52,7 +68,7 @@ sub view {
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
-    my $html = $file->fetch_formatted($ctx);
+    my $html = $file->fetch_formatted($ctx, -1);
 
     $self->page_navigation($ctx->response, 'view', $vars);
 
@@ -146,7 +162,7 @@ sub edit {
     $ctx->response->page_title($vars->{title});
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
-    my $html = $file->fetch_formatted($ctx);
+    my $html = $file->fetch_formatted($ctx, $vars->{position});
 
     $self->page_navigation($ctx->response, 'edit', $vars);
 
@@ -162,9 +178,10 @@ sub edit {
         template => 'page/edit.html',
         context  => $ctx,
         vars     => {
-            '#yukkiname'              => $vars->{page},
-            '#yukkitext'              => scalar $vars->{file}->fetch // '',
-            '#preview-yukkitext'      => \$html,
+            '#yukkiname'                => $vars->{page},
+            '#yukkitext'                => scalar $vars->{file}->fetch // '',
+            '#yukkitext_position@value' => $vars->{position},
+            '#preview-yukkitext'        => \$html,
             %attachments,
         },
     );
@@ -261,7 +278,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 DESCRIPTION
 

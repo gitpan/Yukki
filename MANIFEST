@@ -34,6 +34,7 @@ lib/Yukki/Web/Plugin/Attachment.pm
 lib/Yukki/Web/Plugin/Role/FormatHelper.pm
 lib/Yukki/Web/Plugin/Role/Formatter.pm
 lib/Yukki/Web/Plugin/Spreadsheet.pm
+lib/Yukki/Web/Plugin/Viewer.pm
 lib/Yukki/Web/Plugin/YukkiText.pm
 lib/Yukki/Web/Request.pm
 lib/Yukki/Web/Response.pm
@@ -45,6 +46,7 @@ lib/Yukki/Web/View.pm
 lib/Yukki/Web/View/Login.pm
 lib/Yukki/Web/View/Page.pm
 skel/etc/yukki.conf
+skel/root/script/lib/jquery/jquery-fieldselection.js
 skel/root/script/lib/jquery/jquery-ui.js
 skel/root/script/lib/jquery/jquery.js
 skel/root/script/lib/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css
@@ -72,6 +74,7 @@ skel/root/script/lib/plupload/plupload.js
 skel/root/script/lib/plupload/plupload.silverlight.js
 skel/root/script/lib/plupload/plupload.silverlight.xap
 skel/root/script/lib/sha1/sha1.js
+skel/root/script/slides.js
 skel/root/script/yukki.js
 skel/root/style/lib/jquery/images/ui-bg_diagonals-medium_35_ccccff_40x40.png
 skel/root/style/lib/jquery/images/ui-bg_diagonals-medium_95_fef1ec_40x40.png
@@ -89,6 +92,7 @@ skel/root/style/lib/jquery/images/ui-icons_454599_256x240.png
 skel/root/style/lib/jquery/images/ui-icons_555588_256x240.png
 skel/root/style/lib/jquery/images/ui-icons_cd0a0a_256x240.png
 skel/root/style/lib/jquery/jquery.css
+skel/root/style/slides.css
 skel/root/style/yukki.css
 skel/root/template/error.html
 skel/root/template/links.html
@@ -101,6 +105,7 @@ skel/root/template/page/edit.html
 skel/root/template/page/history.html
 skel/root/template/page/view.html
 skel/root/template/shell.html
+skel/root/template/slides.html
 t/app.t
 t/bin-user-tools.t
 t/bin-yukki-git-init.t

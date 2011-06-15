@@ -1,6 +1,6 @@
 package Yukki::Model::FilePreview;
 BEGIN {
-  $Yukki::Model::FilePreview::VERSION = '0.111280';
+  $Yukki::Model::FilePreview::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose;
@@ -17,9 +17,24 @@ has content => (
 );
 
 
+has position => (
+    is          => 'rw',
+    isa         => 'Int',
+    required    => 1,
+    default     => -1,
+);
+
+
 override fetch => sub {
     my $self = shift;
     return $self->content;
+};
+
+
+override fetch_formatted => sub {
+    my ($self, $ctx, $position) = @_;
+    $position //= $self->position;
+    return $self->SUPER::fetch_formatted($ctx, $position);
 };
 
 1;
@@ -33,7 +48,7 @@ Yukki::Model::FilePreview - a sub-class of the File model for handling previews
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 DESCRIPTION
 
@@ -45,11 +60,19 @@ This is a sub-class of L<Yukki::Model::File> that replaces the C<fetch> method w
 
 This is the content the file should have in the preview.
 
+=head2 position
+
+The position in the text for the caret.
+
 =head1 METHODS
 
 =head2 fetch
 
 Returns the value of L</content>.
+
+=head2 fetch_formatted
+
+Same as in L<Yukki::Model::File>, except that the default position is L</position>.
 
 =head1 AUTHOR
 

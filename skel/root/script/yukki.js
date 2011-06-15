@@ -1,14 +1,8 @@
 ;(function(){
 
-var periodic_tasks = [];
-
 // TODO Naive
 function rebase_url(url) {
     return yukki_base_url + url;
-}
-
-function add_periodic_task(code) {
-    periodic_tasks[periodic_tasks.length] = code;
 }
 
 var templates = {};
@@ -28,21 +22,46 @@ function fetch_template(name, code) {
     }
 }
 
-setInterval(function() {
-    for (var i in periodic_tasks) {
-        periodic_tasks[i]();
+setInterval(function() { $(window).trigger('every_10s'); }, 10000);
+
+function updatePosition() {
+    if ($('textarea#yukkitext').length > 0) {
+        $('#yukkitext_position').val(
+            $('textarea#yukkitext').getSelection().end
+        );
     }
-}, 10000);
+}
 
 $(document).ready(function() {
     $(':button').button();
 
+    $('#preview-yukkitext').scrollTop('#yukkitext-caret');
+
+    $('every_10s', updatePosition);
+    $('form.edit-page').submit(updatePosition);
+
     if ($('#preview-yukkitext').length > 0) {
-        add_periodic_task(function() {
+        $(window).bind('every_10s', function() {
             var url = String(window.location).replace(/\/edit\//, '/preview/');
-            $.post(url, { 'yukkitext': $('#yukkitext').val() }, 
+            $.post(url, { 
+                    'yukkitext'          : $('#yukkitext').val(),
+                    'yukkitext_position' : $('#yukkitext').getSelection().end
+                }, 
                 function(data) {
                     $('#preview-yukkitext').html(data);
+                    setTimeout(function() {
+                        try {
+                            var offset = ($('#yukkitext-caret').offset().top
+                                       + $('#preview-yukkitext').scrollTop())
+                                       - $('#preview-yukkitext').offset().top
+                                       - 100;
+
+                            if (offset < 0) offset = 0;
+
+                            $('#preview-yukkitext').scrollTop(offset);
+                        }
+                        catch(e) {}
+                    }, 10);
                 }
             );
         });
@@ -82,9 +101,7 @@ $(document).ready(function() {
             e.preventDefault();
         });
 
-        add_periodic_task(function() { uploader.start(); });
-
-        uploader.init();
+        $(window).bind('every_10s', function() { uploader.start(); });
 
         var file_id_memo = {};
         function file_id(file) {
@@ -154,11 +171,16 @@ $(document).ready(function() {
             $starter.hide();
         });
 
-        if (uploader.features.dragdrop) {
-            $drop_zone.show();
-            $picker.hide();
-            $starter.hide();
-        }
+        uploader.bind('Init', function(up, params) {
+            if (up.features.dragdrop) {
+                $drop_zone.show();
+                $picker.hide();
+                $starter.hide();
+            }
+        });
+
+        uploader.init();
+
     });
 });
 })();

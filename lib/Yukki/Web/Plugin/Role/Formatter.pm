@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Role::Formatter;
 BEGIN {
-  $Yukki::Web::Plugin::Role::Formatter::VERSION = '0.111280';
+  $Yukki::Web::Plugin::Role::Formatter::VERSION = '0.111660';
 }
 use 5.12.1;
 use Moose::Role;
@@ -39,7 +39,7 @@ Yukki::Web::Plugin::Role::Formatter - interface for HTML formatters
 
 =head1 VERSION
 
-version 0.111280
+version 0.111660
 
 =head1 SYNOPSIS
 

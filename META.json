@@ -4,7 +4,7 @@
       "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.200004, CPAN::Meta::Converter version 2.102400",
+   "generated_by" : "Dist::Zilla version 4.200006, CPAN::Meta::Converter version 2.102400",
    "license" : [
       "perl_5"
    ],
@@ -16,7 +16,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "ExtUtils::MakeMaker" : "6.31",
+            "ExtUtils::MakeMaker" : "6.30",
             "File::ShareDir::Install" : "0.03"
          }
       },
@@ -93,6 +93,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.111280"
+   "version" : "0.111660"
 }
 
