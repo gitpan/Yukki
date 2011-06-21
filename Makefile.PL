@@ -39,6 +39,7 @@ my %WriteMakefileArgs = (
   'PREREQ_PM' => {
     'CHI' => '0',
     'Crypt::SaltedHash' => '0',
+    'Data::Dumper' => '0',
     'DateTime::Format::Mail' => '0',
     'Digest::SHA1' => '0',
     'Email::Address' => '0',
@@ -72,6 +73,7 @@ my %WriteMakefileArgs = (
     'Plack::Session::Store::Cache' => '0',
     'Scalar::Util' => '0',
     'Spreadsheet::Engine' => '0',
+    'StackTrace::Auto' => '0',
     'Sub::Exporter' => '0',
     'Template::Semantic' => '0',
     'Text::MultiMarkdown' => '0',
@@ -82,7 +84,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.111660',
+  'VERSION' => '0.111720',
   'test' => {
     'TESTS' => 't/*.t'
   }

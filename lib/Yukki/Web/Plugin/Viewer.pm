@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Viewer;
 BEGIN {
-  $Yukki::Web::Plugin::Viewer::VERSION = '0.111660';
+  $Yukki::Web::Plugin::Viewer::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -44,7 +44,7 @@ sub show_view_link {
     my $args = "?view=$view";
        $args = '' if $view eq 'default';
 
-    $ctx->response->add_navigation_item({
+    $ctx->response->add_navigation_item([ qw( page page_bottom ) ] => {
         label => $view_info->{label},
         href  => join('/', 'page/view', $repo, $page)
                 . $args,
@@ -65,7 +65,7 @@ Yukki::Web::Plugin::Viewer - plugin for custom page viewers
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 

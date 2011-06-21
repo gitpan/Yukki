@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Spreadsheet;
 BEGIN {
-  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.111660';
+  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -11,7 +11,7 @@ extends 'Yukki::Web::Plugin';
 
 use Scalar::Util qw( blessed );
 use Try::Tiny;
-use Yukki::Error;
+use Yukki::Error qw( http_throw );
 
 
 has format_helpers => (
@@ -115,7 +115,7 @@ sub lookup_name {
 
     my $cell = $self->cell($ctx, $file, $name);
 
-    Yukki::Error->throw('unknown name') if not defined $cell;
+    http_throw('unknown name') if not defined $cell;
 
     return $cell;
 }
@@ -177,7 +177,7 @@ sub spreadsheet_eval {
 
 sub load_spreadsheet {
     my ($self, $ctx, $file) = @_;
-    Yukki::Error->throw('no such spreadsheet exists') unless $file->exists;
+    http_throw('no such spreadsheet exists') unless $file->exists;
     $file->fetch_formatted($ctx);
 }
 
@@ -192,7 +192,7 @@ Yukki::Web::Plugin::Spreadsheet - add spreadsheet functionality to wiki pages
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 

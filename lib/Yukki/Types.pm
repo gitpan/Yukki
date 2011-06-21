@@ -1,12 +1,13 @@
 package Yukki::Types;
 BEGIN {
-  $Yukki::Types::VERSION = '0.111660';
+  $Yukki::Types::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
 
 use MooseX::Types -declare => [ qw(
-    LoginName AccessLevel NavigationLinks
+    LoginName AccessLevel 
+    NavigationLinks NavigationMenuMap
     BaseURL BaseURLEnum BreadcrumbLinks RepositoryMap
     PluginConfig PluginList
 ) ];
@@ -39,6 +40,10 @@ subtype NavigationLinks,
             sort  => Maybe[Int],
         ],
     ];
+
+
+subtype NavigationMenuMap,
+    as HashRef[ NavigationLinks ];
 
 
 enum BaseURLEnum, qw( SCRIPT_NAME REWRITE );
@@ -120,7 +125,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 
@@ -149,13 +154,17 @@ This is a valid access level. This includes any of the following values:
 
 =head2 NavigationLinks
 
-THis is an array of hashes formatted like:
+This is an array of hashes formatted like:
 
   {
       label => 'Label',
       href  => '/link/to/somewhere',
       sort  => 40,
   }
+
+=head2 NavigationMenuMap
+
+This is a hash of L</NavigationLinks>.
 
 =head2 BaseURL
 

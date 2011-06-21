@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.111660';
+  $Yukki::Web::Controller::Page::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -22,6 +22,7 @@ sub fire {
         when ('diff')    { $self->view_diff($ctx) }
         when ('preview') { $self->preview_page($ctx) }
         when ('attach')  { $self->upload_attachment($ctx) }
+        when ('rename')  { $self->rename_page($ctx) }
         default {
             http_throw('That page action does not exist.', {
                 status => 'NotFound',
@@ -142,6 +143,44 @@ sub edit_page {
             position    => $position,
             file        => $page,
             attachments => \@attachments,
+        }) 
+    );
+}
+
+
+sub rename_page {
+    my ($self, $ctx) = @_;
+
+    my ($repo_name, $path) = $self->repo_name_and_path($ctx);
+
+    my $page = $self->lookup_page($repo_name, $path);
+
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
+    if ($ctx->request->method eq 'POST') {
+        my $new_name = $ctx->request->parameters->{yukkiname_new};
+
+        if (my $user = $ctx->session->{user}) {
+            $page->author_name($user->{name});
+            $page->author_email($user->{email});
+        }
+
+        $page->rename({
+            full_path => $new_name,
+            comment   => 'Renamed ' . $page->full_path . ' to ' . $new_name,
+        });
+
+        $ctx->response->redirect(join '/', '/page/edit', $repo_name, $new_name);
+        return;
+    }
+
+    $ctx->response->body( 
+        $self->view('Page')->rename($ctx, { 
+            title       => $page->title,
+            breadcrumb  => $breadcrumb,
+            repository  => $repo_name,
+            page        => $page->full_path, 
+            file        => $page,
         }) 
     );
 }
@@ -276,7 +315,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -304,6 +343,10 @@ to show the page.
 =head2 edit_page
 
 Displays or processes the edit form for a page using.
+
+=head2 rename_page
+
+Displays the rename page form.
 
 =head2 view_history
 

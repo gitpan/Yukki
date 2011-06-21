@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.111660';
+  $Yukki::Web::View::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -80,30 +80,27 @@ sub render_page {
         },
     );
 
-    my $main_title;
+    my ($main_title, $title);
     if ($ctx->response->has_page_title) {
-        $main_title = 'Yukki - ' . $ctx->response->page_title;
+        $title      = $ctx->response->page_title;
+        $main_title = $ctx->response->page_title . ' - Yukki';
     }
     else {
-        $main_title = 'Yukki';
+        $title = $main_title = 'Yukki';
     }
-    
-    my @nav_menu = grep { 
-        my $url = $_->{href}; $url =~ s{\?.*$}{};
 
-        my $match = $self->app->router->match($url);
-        my $access_level_needed = $match->access_level;
-        $self->check_access(
-            user       => $ctx->session->{user},
-            repository => $match->mapping->{repository} // '-',
-            needs      => $access_level_needed,
-        );
-    } $ctx->response->navigation_menu;
+    my $b = sub { $ctx->rebase_url($_[0]) };
+    my %menu_vars = map {
+        ("#nav-$_ .navigation" => [ map {
+            { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
+        } $self->available_menu_items($ctx, $_) ])
+    } $ctx->response->navigation_menu_names;
+
+    $menu_vars{"#nav-$_ .navigation"} //= [] 
+        for (@{ $self->app->settings->menu_names });
 
     my @scripts = $self->app->settings->all_scripts;
     my @styles  = $self->app->settings->all_styles;
-
-    my $b = sub { $ctx->rebase_url($_[0]) };
 
     my $view      = $ctx->request->parameters->{view} // 'default';
     my $view_args = $self->app->settings->page_views->{ $view }
@@ -121,19 +118,33 @@ sub render_page {
                 map { { '@href' => $b->($_) } } 
                     (@styles, @{ $view_args->{vars}{'head link.local'} }) ],
             '#messages'   => $messages,
-            '.main-title' => $main_title,
-            '#navigation .navigation' => [ map { 
-                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
-            } @nav_menu ],
-            '#bottom-navigation .navigation' => [ map { 
-                { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
-            } @nav_menu ],
+            'title'       => $main_title,
+            '.masthead-title' => $title,
+            %menu_vars,
             '#breadcrumb li' => [ map {
                 { 'a' => $_->{label}, 'a@href' => $b->($_->{href}) },
             } $ctx->response->breadcrumb_links ],
             '#content'    => $self->render(template => $template, vars => $vars),
         },
     )->{dom}->toStringHTML;
+}
+
+
+sub available_menu_items {
+    my ($self, $ctx, $name) = @_;
+
+    return grep { 
+        my $url = $_->{href}; $url =~ s{\?.*$}{};
+
+        my $match = $self->app->router->match($url);
+        return unless $match;
+        my $access_level_needed = $match->access_level;
+        $self->check_access(
+            user       => $ctx->session->{user},
+            repository => $match->mapping->{repository} // '-',
+            needs      => $access_level_needed,
+        );
+    } $ctx->response->navigation_menu($name);
 }
 
 
@@ -178,7 +189,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -217,6 +228,12 @@ F<shell.html> template.
 The C<context> is used to render parts of the shell template.
 
 The C<vars> are processed against the given template with L<Template::Semantic>.
+
+=head2 available_menu_items
+
+  my @items = $self->available_menu_items($ctx, 'menu_name');
+
+Retrieves the navigation menu from the L<Yukki::Web::Response> and purges any links that the current user does not have access to.
 
 =head2 render_links
 

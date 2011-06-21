@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Attachment;
 BEGIN {
-  $Yukki::Web::Controller::Attachment::VERSION = '0.111660';
+  $Yukki::Web::Controller::Attachment::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -20,6 +20,7 @@ sub fire {
         when ('download') { $self->download_file($ctx) }
         when ('upload')   { $self->upload_file($ctx) }
         when ('view')     { $self->view_file($ctx) }
+        when ('rename')   { $self->rename_file($ctx) }
         default {
             http_throw('That attachment action does not exist.', {
                 status => 'NotFound',
@@ -71,6 +72,45 @@ sub view_file {
 }
 
 
+sub rename_file {
+    my ($self, $ctx) = @_;
+
+    my $repo_name = $ctx->request->path_parameters->{repository};
+    my $path      = $ctx->request->path_parameters->{file};
+
+    my $file      = $self->lookup_file($repo_name, $path);
+
+    if ($ctx->request->method eq 'POST') {
+        my $new_name = $ctx->request->parameters->{yukkiname_new};
+
+        if (my $user = $ctx->session->{user}) {
+            $file->author_name($user->{name});
+            $file->author_email($user->{email});
+        }
+
+        my $new_file = $file->rename({
+            full_path => $new_name,
+            comment   => 'Renamed ' . $file->full_path . ' to ' . $new_name,
+        });
+
+        my $parent = $new_file->parent // $file->repository->default_file;
+
+        $ctx->response->redirect(join '/', 
+            '/page/edit', $repo_name, $parent->full_path);
+        return;
+    }
+
+    $ctx->response->body( 
+        $self->view('Attachment')->rename($ctx, { 
+            title       => $file->title,
+            repository  => $repo_name,
+            page        => $file->full_path, 
+            file        => $file,
+        }) 
+    );
+}
+
+
 sub upload_file {
     my ($self, $ctx) = @_;
 
@@ -110,7 +150,7 @@ Yukki::Web::Controller::Attachment - Controller for uploading, downloading, and 
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -138,6 +178,10 @@ should force the browser to treat it like a download.
 
 Returns the file in the response with a MIME type reported by
 L<Yukki::Model::File/media_type>.
+
+=head2 rename_file
+
+Handles attachment renaming via the page rename controller.
 
 =head2 upload_file
 

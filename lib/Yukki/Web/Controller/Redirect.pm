@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Redirect;
 BEGIN {
-  $Yukki::Web::Controller::Redirect::VERSION = '0.111660';
+  $Yukki::Web::Controller::Redirect::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -15,7 +15,7 @@ sub fire {
 
     my $redirect = $ctx->request->path_parameters->{redirect};
 
-    Yukki::Error->throw("no redirect URL named") unless $redirect;
+    http_throw("no redirect URL named") unless $redirect;
  
     http_throw("Go to $redirect.", {
         status   => 'MovedPermanently', 
@@ -34,7 +34,7 @@ Yukki::Web::Controller::Redirect - Simple controller for handling internal redir
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 

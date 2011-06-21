@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::YukkiText;
 BEGIN {
-  $Yukki::Web::Plugin::YukkiText::VERSION = '0.111660';
+  $Yukki::Web::Plugin::YukkiText::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -225,7 +225,7 @@ Yukki::Web::Plugin::YukkiText - format text/yukki files using markdown, etc.
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 

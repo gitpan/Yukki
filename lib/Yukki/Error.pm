@@ -1,10 +1,10 @@
 package Yukki::Error;
 BEGIN {
-  $Yukki::Error::VERSION = '0.111660';
+  $Yukki::Error::VERSION = '0.111720';
 }
 use Moose;
 
-with qw( Throwable HTTP::Throwable MooseX::Traits );
+with qw( Throwable StackTrace::Auto HTTP::Throwable MooseX::Traits );
 
 use Sub::Exporter -setup => {
     exports => {
@@ -21,7 +21,7 @@ use Yukki::Web::View;
 {
     package Yukki::Error::Fixup;
 BEGIN {
-  $Yukki::Error::Fixup::VERSION = '0.111660';
+  $Yukki::Error::Fixup::VERSION = '0.111720';
 }
     use Moose::Role;
 
@@ -133,7 +133,7 @@ Yukki::Error - Yukki's exception class
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 

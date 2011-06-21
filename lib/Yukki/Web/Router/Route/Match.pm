@@ -1,12 +1,13 @@
 package Yukki::Web::Router::Route::Match;
 BEGIN {
-  $Yukki::Web::Router::Route::Match::VERSION = '0.111660';
+  $Yukki::Web::Router::Route::Match::VERSION = '0.111720';
 }
 use Moose;
 
 extends 'Path::Router::Route::Match';
 
 use List::MoreUtils qw( all );
+use Yukki::Error qw( http_throw );
 
 # ABSTRACT: Matching with access controls
 
@@ -25,7 +26,7 @@ sub access_level {
         }
     }
 
-    Yukki::Error->throw("no ACL found to match " . $self->path);
+    http_throw("no ACL found to match " . $self->path);
 }
 
 1;
@@ -39,7 +40,7 @@ Yukki::Web::Router::Route::Match - Matching with access controls
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 

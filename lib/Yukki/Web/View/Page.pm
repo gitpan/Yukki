@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.111660';
+  $Yukki::Web::View::Page::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -33,10 +33,10 @@ sub blank {
 sub page_navigation {
     my ($self, $response, $this_action, $vars) = @_;
 
-    for my $action (qw( edit history )) {
+    for my $action (qw( edit history rename )) {
         next if $action eq $this_action;
 
-        $response->add_navigation_item({
+        $response->add_navigation_item([ qw( page page_bottom ) ] => {
             label => ucfirst $action,
             href  => join('/', 'page', $action, $vars->{repository}, $vars->{page}),
             sort  => 20,
@@ -51,7 +51,7 @@ sub page_navigation {
         my $args = "?view=$view_name";
            $args = '' if $view_name eq 'default';
 
-        $response->add_navigation_item({
+        $response->add_navigation_item([ qw( page page_bottom ) ] => {
             label => $view_info->{label},
             href  => join('/', 'page/view', $vars->{repository}, $vars->{page})
                    . $args,
@@ -188,6 +188,27 @@ sub edit {
 }
 
 
+sub rename {
+    my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
+
+    $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
+
+    $self->page_navigation($ctx->response, 'rename', $vars)
+        unless $ctx->request->path_parameters->{file};
+
+    return $self->render_page(
+        template => 'page/rename.html',
+        context  => $ctx,
+        vars     => {
+            '#yukkiname'                => $vars->{page},
+            '#yukkiname_new@value'      => $vars->{page},
+        },
+    );
+}
+
+
 sub attachments {
     my ($self, $ctx, $attachments) = @_;
 
@@ -246,6 +267,13 @@ sub attachment_links {
                     $attachment->repository_name,
                     $attachment->full_path),
         };
+
+        push @links, {
+            label => 'Rename',
+            href  => join('/', 'attachment', 'rename',
+                    $attachment->repository_name,
+                    $attachment->full_path),
+        };
     }
 
     return @links;
@@ -278,7 +306,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -310,6 +338,10 @@ Display a diff for a file.
 =head2 edit
 
 Renders the editor for a page.
+
+=head2 rename
+
+Renders the rename form for a page.
 
 =head2 attachments
 

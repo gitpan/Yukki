@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Login;
 BEGIN {
-  $Yukki::Web::Controller::Login::VERSION = '0.111660';
+  $Yukki::Web::Controller::Login::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -90,7 +90,7 @@ Yukki::Web::Controller::Login - shows the login page and handles login
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 

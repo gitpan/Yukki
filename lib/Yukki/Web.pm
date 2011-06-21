@@ -1,6 +1,6 @@
 package Yukki::Web;
 BEGIN {
-  $Yukki::Web::VERSION = '0.111660';
+  $Yukki::Web::VERSION = '0.111720';
 }
 use Moose;
 
@@ -132,7 +132,7 @@ sub dispatch {
             );
 
         if ($ctx->session->{user}) {
-            $ctx->response->add_navigation_item({
+            $ctx->response->add_navigation_item(user => {
                 label => 'Sign out',
                 href  => 'logout',
                 sort  => 100,
@@ -140,7 +140,7 @@ sub dispatch {
         }
         
         else {
-            $ctx->response->add_navigation_item({
+            $ctx->response->add_navigation_item(user => {
                 label => 'Sign in',
                 href  => 'login',
                 sort  => 100,
@@ -151,10 +151,10 @@ sub dispatch {
             my $config = $self->settings->repositories->{$repository};
 
             my $name = $config->name;
-            $ctx->response->add_navigation_item({
+            $ctx->response->add_navigation_item(repository => {
                 label => $name,
                 href  => join('/', 'page/view',  $repository),
-                sort  => 90,
+                sort  => $config->sort,
             });
         }
 
@@ -236,7 +236,7 @@ Yukki::Web - the Yukki web server
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,6 @@
 package Yukki::Model::File;
 BEGIN {
-  $Yukki::Model::File::VERSION = '0.111660';
+  $Yukki::Model::File::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -11,6 +11,7 @@ use Digest::SHA1 qw( sha1_hex );
 use Number::Bytes::Human qw( format_bytes );
 use LWP::MediaTypes qw( guess_media_type );
 use Path::Class;
+use Yukki::Error qw( http_throw );
 
 # ABSTRACT: the model for loading and saving files in the wiki
 
@@ -163,18 +164,73 @@ sub store {
     elsif ($params->{filename}) {
         $object_id = $self->make_blob_from_file($blob_name, $params->{filename});
     }
-    Yukki::Error->throw("unable to create blob for $path") unless $object_id;
+    http_throw("unable to create blob for $path") unless $object_id;
 
     my $old_tree_id = $self->find_root;
-    Yukki::Error->throw("unable to locate original tree ID for ".$self->branch)
+    http_throw("unable to locate original tree ID for ".$self->branch)
         unless $old_tree_id;
 
     my $new_tree_id = $self->make_tree($old_tree_id, \@parts, $object_id);
-    Yukki::Error->throw("unable to create the new tree containing $path\n")
+    http_throw("unable to create the new tree containing $path\n")
         unless $new_tree_id;
 
     my $commit_id = $self->commit_tree($old_tree_id, $new_tree_id, $params->{comment});
-    Yukki::Error->throw("unable to commit the new tree containing $path\n")
+    http_throw("unable to commit the new tree containing $path\n")
+        unless $commit_id;
+
+    $self->update_root($old_tree_id, $commit_id);
+}
+
+
+sub rename {
+    my ($self, $params) = @_;
+    my $old_path = $self->full_path;
+
+    my (@new_parts) = split m{/}, $params->{full_path};
+    my (@old_parts) = split m{/}, $old_path;
+    my $blob_name = $old_parts[-1];
+
+    my $object_id = $self->object_id;
+
+    my $old_tree_id = $self->find_root;
+    http_throw("unable to locate original tree ID for ".$self->branch)
+        unless $old_tree_id;
+
+    my $new_tree_id = $self->make_tree(
+        $old_tree_id, \@old_parts, \@new_parts, $object_id);
+    http_throw("unable to create the new tree renaming $old_path to $params->{full_path}\n")
+        unless $new_tree_id;
+
+    my $commit_id = $self->commit_tree($old_tree_id, $new_tree_id, $params->{comment});
+    http_throw("unable to commit the new tree renaming $old_path to $params->{full_path}\n")
+        unless $commit_id;
+
+    $self->update_root($old_tree_id, $commit_id);
+
+    return Yukki::Model::File->new(
+        app        => $self->app,
+        repository => $self->repository,
+        full_path  => $params->{full_path},
+    );
+}
+
+
+sub remove {
+    my ($self, $params) = @_;
+    my $old_path = $self->full_path;
+
+    my (@old_parts) = split m{/}, $old_path;
+
+    my $old_tree_id = $self->find_root;
+    http_throw("unable to locate original tree ID for ".$self->branch)
+        unless $old_tree_id;
+
+    my $new_tree_id = $self->make_tree($old_tree_id, \@old_parts);
+    http_throw("unable to create the new tree removing $old_path\n")
+        unless $new_tree_id;
+
+    my $commit_id = $self->commit_tree($old_tree_id, $new_tree_id, $params->{comment});
+    http_throw("unable to commit the new tree removing $old_path\n")
         unless $commit_id;
 
     $self->update_root($old_tree_id, $commit_id);
@@ -263,6 +319,21 @@ sub list_files {
     return $self->repository->list_files($self->path);
 }
 
+
+sub parent {
+    my $self = shift;
+
+    my @parts = split m{/}, $self->path;
+    return if @parts == 1;
+
+    pop @parts;
+    return Yukki::Model::File->new(
+        app        => $self->app,
+        repository => $self->repository,
+        path       => join('/', @parts),
+    );
+}
+
 1;
 
 __END__
@@ -274,7 +345,7 @@ Yukki::Model::File - the model for loading and saving files in the wiki
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 SYNOPSIS
 
@@ -363,6 +434,21 @@ This is the MIME type detected for the file.
 This stores a new version of the file, either from the given content string or a
 named local file.
 
+=head2 rename
+
+  my $new_file = $file->rename({
+      full_path => 'renamed/to/path.yukki',
+      comment   => 'renamed the file',
+  });
+
+Renames the file within the repository. When complete, this method returns a reference to the L<Yukki::Model::File> object representing the new path.
+
+=head2 remove
+
+  $self->remove({ comment => 'removed the file' });
+
+Removes the file from the repostory. The file is not permanently deleted as it still exists in the version history. However, as of this writing, the API here does not provide any means for getting at a deleted file.
+
 =head2 exists
 
 Returns true if the file exists in the repository already.
@@ -449,6 +535,20 @@ Takes this file and returns a L<Yukki::Model::FilePreview> object, with the file
   my @files = $self->list_files;
 
 List the files attached to/under this file path.
+
+=head2 parent
+
+  my $parent = $self->parent;
+
+Return a L<Yukki::Model::File> representing the parent path of the current file within the current repository. For example, if the current L<path> is:
+
+  foo/bar/baz.pdf
+
+the parent of it will be:
+
+  foo/bar.yukki
+
+This returns C<undef> if the current file is at the root of the repository.
 
 =head1 AUTHOR
 

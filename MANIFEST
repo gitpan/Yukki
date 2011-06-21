@@ -43,6 +43,7 @@ lib/Yukki/Web/Router/Route.pm
 lib/Yukki/Web/Router/Route/Match.pm
 lib/Yukki/Web/Settings.pm
 lib/Yukki/Web/View.pm
+lib/Yukki/Web/View/Attachment.pm
 lib/Yukki/Web/View/Login.pm
 lib/Yukki/Web/View/Page.pm
 skel/etc/yukki.conf
@@ -94,6 +95,7 @@ skel/root/style/lib/jquery/images/ui-icons_cd0a0a_256x240.png
 skel/root/style/lib/jquery/jquery.css
 skel/root/style/slides.css
 skel/root/style/yukki.css
+skel/root/template/attachment/rename.html
 skel/root/template/error.html
 skel/root/template/links.html
 skel/root/template/login/page.html
@@ -103,6 +105,7 @@ skel/root/template/page/blank.html
 skel/root/template/page/diff.html
 skel/root/template/page/edit.html
 skel/root/template/page/history.html
+skel/root/template/page/rename.html
 skel/root/template/page/view.html
 skel/root/template/shell.html
 skel/root/template/slides.html

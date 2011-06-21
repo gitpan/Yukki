@@ -1,6 +1,6 @@
 package Yukki::Web::Settings;
 BEGIN {
-  $Yukki::Web::Settings::VERSION = '0.111660';
+  $Yukki::Web::Settings::VERSION = '0.111720';
 }
 use 5.12.1;
 use Moose;
@@ -76,6 +76,19 @@ has styles => (
 );
 
 
+has menu_names => (
+    is          => 'ro',
+    isa         => 'ArrayRef[Str]',
+    required    => 1,
+    default     => sub { [ qw(
+        repository
+        user
+        page
+        page_bottom
+    ) ] },
+);
+
+
 has page_views => (
     is          => 'ro',
     isa         => 'HashRef[HashRef]',
@@ -131,7 +144,7 @@ Yukki::Web::Settings - provides structure and validation to web settings in yukk
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -175,6 +188,18 @@ shell template. If not set, the defaults are:
 As you can see, these are full paths and may be given as paths to foreign hosts.
 In order to keep Yukki working in good order, you will probaby want to include
 at least the scripts listed above.
+
+=head2 menu_names
+
+In case your templates have custom menus on them, you may need to set this. The default is:
+
+  menu_names:
+      - repository
+      - user
+      - page
+      - page_bottom
+
+This will insure that those menus are empty when they should be empty.
 
 =head2 page_views
 

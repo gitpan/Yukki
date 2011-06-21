@@ -1,10 +1,10 @@
 package Yukki::Web::Response;
 BEGIN {
-  $Yukki::Web::Response::VERSION = '0.111660';
+  $Yukki::Web::Response::VERSION = '0.111720';
 }
 use Moose;
 
-use Yukki::Types qw( BreadcrumbLinks NavigationLinks );
+use Yukki::Types qw( BreadcrumbLinks NavigationMenuMap );
 
 use Plack::Response;
 
@@ -37,14 +37,12 @@ has page_title => (
 
 has navigation => (
     is          => 'rw',
-    isa         => NavigationLinks,
+    isa         => NavigationMenuMap,
     required    => 1,
-    default     => sub { [] },
-    traits      => [ 'Array' ],
+    default     => sub { +{} },
+    traits      => [ 'Hash' ],
     handles     => {
-        navigation_menu      => [ sort => sub { ($_[0]->{sort}//50) <=> ($_[1]->{sort}//50) } ],
-        add_navigation_item  => 'push',
-        add_navigation_items => 'push',
+        navigation_menu_names => 'keys',
     },
 );
 
@@ -60,6 +58,28 @@ has breadcrumb => (
     },
 );
 
+
+sub navigation_menu {
+    my ($self, $name) = @_;
+    return sort { ($a->{sort}//50) <=> ($b->{sort}//50) } 
+               @{ $self->navigation->{$name} // [] };
+}
+
+
+sub add_navigation_item { shift->add_navigation_items(@_) }
+
+sub add_navigation_items {
+    my $self = shift;
+    my $name_or_names = shift;
+
+    my @names = ref $name_or_names ? @$name_or_names : ($name_or_names);
+
+    for my $name (@names) {
+        $self->navigation->{$name} //= [];
+        push @{ $self->navigation->{$name} }, @_;
+    }
+}
+
 1;
 
 __END__
@@ -71,7 +91,7 @@ Yukki::Web::Response - the response to the client
 
 =head1 VERSION
 
-version 0.111660
+version 0.111720
 
 =head1 DESCRIPTION
 
@@ -102,11 +122,33 @@ This is the navigation menu to place in the page. This is an array of hashes. Ea
       sort  => 50,
   }
 
-A sorted list of items is retrieved using C<navigation_menu>. New items can be added with the C<add_navigation_item> and C<add_navigation_items> methods.
+A sorted list of items is retrieved using L</navigation_menu>. New items can be added with the L</add_navigation_item> and L</add_navigation_items> methods.
 
 =head2 breadcrumb
 
 This is the breadcrumb to display. It is an empty array by default (meaning no breadcrumb). Each element of the breadcrumb is formatted like navigation, except that C<sort> is not used here.
+
+=head1 METHODS
+
+=head2 navigation_menu
+
+  my @items = $response->navigation_menu('repository');
+
+Returns a sorted list of navigation items  for the named menu.
+
+=head2 add_navigation_item
+
+=head2 add_navigation_items
+
+  $response->add_navigation_item(menu_name => {
+      label => 'Link Title',
+      url   => '/path/to/some/place',
+      sort  => 50,
+  });
+
+Add one or more items to the named menu. The first argument is always the name or names of the menu. Mutliple names may be given in an array reference. If multiple names are given, the menu items given will be added to each menu named. The remaining arguments are hash references that must have a C<label> and a C<url>. The C<sort> is optional.
+
+L</add_navigation_item> is a synonym for L</add_navigation_items>.
 
 =head1 AUTHOR
 
