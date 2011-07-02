@@ -1,6 +1,6 @@
 package Yukki::Web::View::Login;
 BEGIN {
-  $Yukki::Web::View::Login::VERSION = '0.111720';
+  $Yukki::Web::View::Login::VERSION = '0.111830';
 }
 use Moose;
 
@@ -32,7 +32,7 @@ Yukki::Web::View::Login - show a login form
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 

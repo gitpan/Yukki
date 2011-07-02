@@ -1,6 +1,6 @@
 package Yukki::Model::Repository;
 BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.111720';
+  $Yukki::Model::Repository::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
@@ -77,8 +77,6 @@ sub author_email { shift->app->settings->anonymous->author_email }
 
 sub make_tree {
     my $self = shift;
-    use Data::Dumper;
-    warn Dumper([ caller ], \@_);
     my $base = shift;
     my $path = shift;
 
@@ -449,7 +447,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 SYNOPSIS
 

@@ -1,11 +1,11 @@
 package Yukki::Web::Controller::Attachment;
 BEGIN {
-  $Yukki::Web::Controller::Attachment::VERSION = '0.111720';
+  $Yukki::Web::Controller::Attachment::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
 
-extends 'Yukki::Web::Controller';
+with 'Yukki::Web::Controller';
 
 use JSON;
 use Yukki::Error qw( http_throw );
@@ -21,6 +21,7 @@ sub fire {
         when ('upload')   { $self->upload_file($ctx) }
         when ('view')     { $self->view_file($ctx) }
         when ('rename')   { $self->rename_file($ctx) }
+        when ('remove')   { $self->remove_file($ctx) }
         default {
             http_throw('That attachment action does not exist.', {
                 status => 'NotFound',
@@ -83,21 +84,27 @@ sub rename_file {
     if ($ctx->request->method eq 'POST') {
         my $new_name = $ctx->request->parameters->{yukkiname_new};
 
-        if (my $user = $ctx->session->{user}) {
-            $file->author_name($user->{name});
-            $file->author_email($user->{email});
+        my $part = qr{[_a-z0-9-.]+(?:\.[_a-z0-9-]+)*}i;
+        if ($new_name =~ m{^$part(?:/$part)*$}) {
+            if (my $user = $ctx->session->{user}) {
+                $file->author_name($user->{name});
+                $file->author_email($user->{email});
+            }
+
+            my $new_file = $file->rename({
+                full_path => $new_name,
+                comment   => 'Renamed ' . $file->full_path . ' to ' . $new_name,
+            });
+
+            my $parent = $new_file->parent // $file->repository->default_file;
+
+            $ctx->response->redirect(join '/', 
+                '/page/edit', $repo_name, $parent->full_path);
+            return;
         }
-
-        my $new_file = $file->rename({
-            full_path => $new_name,
-            comment   => 'Renamed ' . $file->full_path . ' to ' . $new_name,
-        });
-
-        my $parent = $new_file->parent // $file->repository->default_file;
-
-        $ctx->response->redirect(join '/', 
-            '/page/edit', $repo_name, $parent->full_path);
-        return;
+        else {
+            $ctx->add_errors('the new name must contain only letters, numbers, underscores, dashes, periods, and slashes');
+        }
     }
 
     $ctx->response->body( 
@@ -107,6 +114,44 @@ sub rename_file {
             page        => $file->full_path, 
             file        => $file,
         }) 
+    );
+}
+
+
+sub remove_file {
+    my ($self, $ctx) = @_;
+
+    my $repo_name = $ctx->request->path_parameters->{repository};
+    my $path      = $ctx->request->path_parameters->{file};
+
+    my $file      = $self->lookup_file($repo_name, $path);
+
+    my $return_to = $file->parent // $file->repository->default_file;
+
+    my $confirmed = $ctx->request->body_parameters->{confirmed};
+    if ($ctx->request->method eq 'POST' and $confirmed) {
+
+        if (my $user = $ctx->session->{user}) {
+            $file->author_name($user->{name});
+            $file->author_email($user->{email});
+        }
+
+        $file->remove({
+            comment => 'Removing ' . $file->full_path . ' from repository.',
+        });
+
+        $ctx->response->redirect(join '/', '/page/view', $repo_name, $return_to->full_path);
+        return;
+    }
+
+    $ctx->response->body(
+        $self->view('Attachment')->remove($ctx, {
+            title       => $file->title,
+            repository  => $repo_name,
+            page        => $file->full_path,
+            file        => $file,
+            return_link => join('/', '/page/view', $repo_name, $return_to->full_path),
+        })
     );
 }
 
@@ -150,7 +195,7 @@ Yukki::Web::Controller::Attachment - Controller for uploading, downloading, and 
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 
@@ -182,6 +227,10 @@ L<Yukki::Model::File/media_type>.
 =head2 rename_file
 
 Handles attachment renaming via the page rename controller.
+
+=head2 remove_file
+
+Displays the remove confirmation.
 
 =head2 upload_file
 

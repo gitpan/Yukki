@@ -1,6 +1,6 @@
 package Yukki::Error;
 BEGIN {
-  $Yukki::Error::VERSION = '0.111720';
+  $Yukki::Error::VERSION = '0.111830';
 }
 use Moose;
 
@@ -21,7 +21,7 @@ use Yukki::Web::View;
 {
     package Yukki::Error::Fixup;
 BEGIN {
-  $Yukki::Error::Fixup::VERSION = '0.111720';
+  $Yukki::Error::Fixup::VERSION = '0.111830';
 }
     use Moose::Role;
 
@@ -133,7 +133,7 @@ Yukki::Error - Yukki's exception class
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 SYNOPSIS
 

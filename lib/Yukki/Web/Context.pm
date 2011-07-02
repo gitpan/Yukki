@@ -1,6 +1,6 @@
 package Yukki::Web::Context;
 BEGIN {
-  $Yukki::Web::Context::VERSION = '0.111720';
+  $Yukki::Web::Context::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
@@ -92,7 +92,7 @@ for my $message_type (qw( errors warnings info )) {
         default     => sub { [] },
         traits      => [ 'Array' ],
         handles     => {
-            "list_$message_type" => 'elements',
+            "list_$message_type" => [ 'map', sub { ucfirst "$_." } ],
             "add_$message_type"  => 'push',
             "has_$message_type"  => 'count',
         },
@@ -117,7 +117,7 @@ Yukki::Web::Context - request-response context descriptor
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 SYNOPSIS
 

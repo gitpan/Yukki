@@ -1,11 +1,11 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.111720';
+  $Yukki::Web::Controller::Page::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
 
-extends 'Yukki::Web::Controller';
+with 'Yukki::Web::Controller';
 
 use Yukki::Error qw( http_throw );
 
@@ -23,6 +23,7 @@ sub fire {
         when ('preview') { $self->preview_page($ctx) }
         when ('attach')  { $self->upload_attachment($ctx) }
         when ('rename')  { $self->rename_page($ctx) }
+        when ('remove')  { $self->remove_page($ctx) }
         default {
             http_throw('That page action does not exist.', {
                 status => 'NotFound',
@@ -160,18 +161,26 @@ sub rename_page {
     if ($ctx->request->method eq 'POST') {
         my $new_name = $ctx->request->parameters->{yukkiname_new};
 
-        if (my $user = $ctx->session->{user}) {
-            $page->author_name($user->{name});
-            $page->author_email($user->{email});
+        my $part = qr{[_a-z0-9-.]+(?:\.[_a-z0-9-]+)*}i;
+        if ($new_name =~ m{^$part(?:/$part)*$}) {
+
+            if (my $user = $ctx->session->{user}) {
+                $page->author_name($user->{name});
+                $page->author_email($user->{email});
+            }
+
+            $page->rename({
+                full_path => $new_name,
+                comment   => 'Renamed ' . $page->full_path . ' to ' . $new_name,
+            });
+
+            $ctx->response->redirect(join '/', '/page/edit', $repo_name, $new_name);
+            return;
+
         }
-
-        $page->rename({
-            full_path => $new_name,
-            comment   => 'Renamed ' . $page->full_path . ' to ' . $new_name,
-        });
-
-        $ctx->response->redirect(join '/', '/page/edit', $repo_name, $new_name);
-        return;
+        else {
+            $ctx->add_errors('the new name must contain only letters, numbers, underscores, dashes, periods, and slashes');
+        }
     }
 
     $ctx->response->body( 
@@ -181,6 +190,51 @@ sub rename_page {
             repository  => $repo_name,
             page        => $page->full_path, 
             file        => $page,
+        }) 
+    );
+}
+
+
+sub remove_page {
+    my ($self, $ctx) = @_;
+
+    my ($repo_name, $path) = $self->repo_name_and_path($ctx);
+
+    my $page = $self->lookup_page($repo_name, $path);
+
+    my $breadcrumb = $self->breadcrumb($page->repository, $path);
+
+    my $confirmed = $ctx->request->body_parameters->{confirmed};
+    if ($ctx->request->method eq 'POST' and $confirmed) {
+        my $return_to = $page->parent // $page->repository->default_file;
+        if ($return_to->full_path ne $page->full_path) {
+            if (my $user = $ctx->session->{user}) {
+                $page->author_name($user->{name});
+                $page->author_email($user->{email});
+            }
+
+            $page->remove({
+                comment   => 'Removing ' . $page->full_path . ' from repository.',
+            });
+
+            $ctx->response->redirect(join '/', '/page/view', $repo_name, $return_to->full_path);
+            return;
+
+        }
+
+        else {
+            $ctx->add_errors('you may not remove the top-most page of a repository');
+        }
+    }
+
+    $ctx->response->body( 
+        $self->view('Page')->remove($ctx, { 
+            title       => $page->title,
+            breadcrumb  => $breadcrumb,
+            repository  => $repo_name,
+            page        => $page->full_path, 
+            file        => $page,
+            return_link => join('/', '/page/view', $repo_name, $page->full_path),
         }) 
     );
 }
@@ -315,7 +369,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 
@@ -347,6 +401,10 @@ Displays or processes the edit form for a page using.
 =head2 rename_page
 
 Displays the rename page form.
+
+=head2 remove_page
+
+Displays the remove confirmation.
 
 =head2 view_history
 

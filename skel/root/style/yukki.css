@@ -15,7 +15,9 @@ table tbody { border: 1px solid #99f }
 th { vertical-align: bottom; padding: 3px; border: 1px solid #aaaaff; background: #aaaaff url(lib/jquery/images/ui-bg_glass_65_aaaaff_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212155; }
 td { vertical-align: top; padding: 3px }
 
-blockquote, pre { margin: 1em 1em; padding: 1em; border: 1px solid #ddf; background-color: #eef; }
+blockquote, pre { margin: 1em 1em; padding: 1em; border: 1px solid #ddf; background-color: #eef; font-family: monospace; font-size: 0.9em }
+code { border: 1px solid #ddf; background-color: #eef; font-family: monospace; font-size: 0.9em }
+pre code { border: none }
 
 del, del * { background-color: #fdd; text-decoration: none }
 ins, ins * { background-color: #dfd; text-decoration: none }
@@ -41,6 +43,11 @@ div.button-group { text-align: right }
 div.progress { height: 15px }
 
 .links li { display: inline-block; margin: 0 3px; list-style: none }
+
+li.error, li.warning, li.info { list-style: none }
+.error { padding: 3px; margin: 3px; border: 1px solid #CD0A0A; color: #CD0A0A; background-color: #FEF1EC }
+.warning { padding: 3px; margin: 3px; border: 1px solid #CDCD0A; color: #CDCD0A; background-color: #FEFEEC }
+.info { padding: 3px; margin: 3px; border: 1px solid #0A0ACD; color: #0A0ACD; background-color: #ECF1FE }
 
 /*** Login ***/
 

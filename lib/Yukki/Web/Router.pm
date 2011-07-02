@@ -1,6 +1,6 @@
 package Yukki::Web::Router;
 BEGIN {
-  $Yukki::Web::Router::VERSION = '0.111720';
+  $Yukki::Web::Router::VERSION = '0.111830';
 }
 use Moose;
 
@@ -71,7 +71,7 @@ sub BUILD {
             repository => 'main',
         },
         validations => {
-            action     => qr/^(?:view|edit|history|diff|preview|attach|rename)$/,
+            action     => qr/^(?:view|edit|history|diff|preview|attach|rename|remove)$/,
             repository => qr/^[_a-z0-9]+$/i,
             page       => subtype('ArrayRef[Str]' => where {
                 all { /^[_a-z0-9-.]+(?:\.[_a-z0-9-]+)*$/i } @$_
@@ -79,7 +79,7 @@ sub BUILD {
         },
         acl => [
             [ read  => { action => [ qw( view preview history diff ) ] } ],
-            [ write => { action => [ qw( edit attach rename ) ]  } ],
+            [ write => { action => [ qw( edit attach rename remove ) ]  } ],
         ],
         target => $self->controller('Page'),
     ));
@@ -91,7 +91,7 @@ sub BUILD {
             file       => [ 'untitled.txt' ],
         },
         validations => {
-            action     => qr/^(?:view|upload|download|rename)$/,
+            action     => qr/^(?:view|upload|download|rename|remove)$/,
             repository => qr/^[_a-z0-9]+$/i,
             page       => subtype('ArrayRef[Str]' => where {
                 all { /^[_a-z0-9-]+(?:\.[_a-z0-9-]+)*$/i } @$_
@@ -99,7 +99,7 @@ sub BUILD {
         },
         acl => [
             [ read  => { action => [ qw( view download ) ] } ],
-            [ write => { action => [ qw( upload rename ) ] } ],
+            [ write => { action => [ qw( upload rename remove ) ] } ],
         ],  
         target => $self->controller('Attachment'),
     ));
@@ -116,7 +116,7 @@ Yukki::Web::Router - send requests to the correct controllers, yo
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 

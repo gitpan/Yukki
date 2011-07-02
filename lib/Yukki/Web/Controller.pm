@@ -1,8 +1,8 @@
 package Yukki::Web::Controller;
 BEGIN {
-  $Yukki::Web::Controller::VERSION = '0.111720';
+  $Yukki::Web::Controller::VERSION = '0.111830';
 }
-use Moose;
+use Moose::Role;
 
 # ABSTRACT: Base class for Yukki::Web controllers
 
@@ -16,7 +16,7 @@ has app => (
 );
 
 
-sub fire { die 'not implemented here' }
+requires 'fire';
 
 1;
 
@@ -29,7 +29,7 @@ Yukki::Web::Controller - Base class for Yukki::Web controllers
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 

@@ -1,11 +1,11 @@
 package Yukki::Web::Controller::Login;
 BEGIN {
-  $Yukki::Web::Controller::Login::VERSION = '0.111720';
+  $Yukki::Web::Controller::Login::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
 
-extends 'Yukki::Web::Controller';
+with 'Yukki::Web::Controller';
 
 use Yukki::Error qw( http_throw );
 
@@ -90,7 +90,7 @@ Yukki::Web::Controller::Login - shows the login page and handles login
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,6 @@
 package Yukki;
 BEGIN {
-  $Yukki::VERSION = '0.111720';
+  $Yukki::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
@@ -174,7 +174,7 @@ Yukki - Yet Uh-nother wiki
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.111720';
+  $Yukki::Web::View::Page::VERSION = '0.111830';
 }
 use 5.12.1;
 use Moose;
@@ -33,7 +33,7 @@ sub blank {
 sub page_navigation {
     my ($self, $response, $this_action, $vars) = @_;
 
-    for my $action (qw( edit history rename )) {
+    for my $action (qw( edit history rename remove )) {
         next if $action eq $this_action;
 
         $response->add_navigation_item([ qw( page page_bottom ) ] => {
@@ -209,6 +209,27 @@ sub rename {
 }
 
 
+sub remove {
+    my ($self, $ctx, $vars) = @_;
+    my $file = $vars->{file};
+
+    $ctx->response->page_title($vars->{title});
+    $ctx->response->breadcrumb($vars->{breadcrumb});
+
+    $self->page_navigation($ctx->response, 'remove', $vars)
+        unless $ctx->request->path_parameters->{file};
+
+    return $self->render_page(
+        template => 'page/remove.html',
+        context  => $ctx,
+        vars     => {
+            '.yukkiname'          => $vars->{page},
+            '#cancel_remove@href' => $vars->{return_link},
+        },
+    );
+}
+
+
 sub attachments {
     my ($self, $ctx, $attachments) = @_;
 
@@ -267,14 +288,21 @@ sub attachment_links {
                     $attachment->repository_name,
                     $attachment->full_path),
         };
-
-        push @links, {
-            label => 'Rename',
-            href  => join('/', 'attachment', 'rename',
-                    $attachment->repository_name,
-                    $attachment->full_path),
-        };
     }
+
+    push @links, {
+        label => 'Rename',
+        href  => join('/', 'attachment', 'rename',
+                $attachment->repository_name,
+                $attachment->full_path),
+    };
+
+    push @links, {
+        label => 'Remove',
+        href  => join('/', 'attachment', 'remove',
+                $attachment->repository_name,
+                $attachment->full_path),
+    };
 
     return @links;
 }
@@ -306,7 +334,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 
@@ -342,6 +370,10 @@ Renders the editor for a page.
 =head2 rename
 
 Renders the rename form for a page.
+
+=head2 remove
+
+Renders the remove confirmation page.
 
 =head2 attachments
 

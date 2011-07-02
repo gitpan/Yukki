@@ -1,6 +1,6 @@
 package Yukki::Web::Response;
 BEGIN {
-  $Yukki::Web::Response::VERSION = '0.111720';
+  $Yukki::Web::Response::VERSION = '0.111830';
 }
 use Moose;
 
@@ -91,7 +91,7 @@ Yukki::Web::Response - the response to the client
 
 =head1 VERSION
 
-version 0.111720
+version 0.111830
 
 =head1 DESCRIPTION
 
