@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Viewer;
 BEGIN {
-  $Yukki::Web::Plugin::Viewer::VERSION = '0.111830';
+  $Yukki::Web::Plugin::Viewer::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -65,7 +65,7 @@ Yukki::Web::Plugin::Viewer - plugin for custom page viewers
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 SYNOPSIS
 

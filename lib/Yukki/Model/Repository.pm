@@ -1,6 +1,6 @@
 package Yukki::Model::Repository;
 BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.111830';
+  $Yukki::Model::Repository::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -447,7 +447,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 SYNOPSIS
 

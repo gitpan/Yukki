@@ -4,7 +4,7 @@
       "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.200006, CPAN::Meta::Converter version 2.102400",
+   "generated_by" : "Dist::Zilla version 4.200009, CPAN::Meta::Converter version 2.110440",
    "license" : [
       "perl_5"
    ],
@@ -59,6 +59,8 @@
             "Spreadsheet::Engine" : 0,
             "StackTrace::Auto" : 0,
             "Sub::Exporter" : 0,
+            "Syntax::Highlight::Engine::Kate" : 0,
+            "Syntax::Highlight::Engine::Kate::All" : 0,
             "Template::Semantic" : 0,
             "Text::MultiMarkdown" : 0,
             "Throwable" : 0,
@@ -94,6 +96,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.111830"
+   "version" : "0.112770"
 }
 

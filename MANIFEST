@@ -34,6 +34,7 @@ lib/Yukki/Web/Plugin/Attachment.pm
 lib/Yukki/Web/Plugin/Role/FormatHelper.pm
 lib/Yukki/Web/Plugin/Role/Formatter.pm
 lib/Yukki/Web/Plugin/Spreadsheet.pm
+lib/Yukki/Web/Plugin/SyntaxHighlight.pm
 lib/Yukki/Web/Plugin/Viewer.pm
 lib/Yukki/Web/Plugin/YukkiText.pm
 lib/Yukki/Web/Request.pm
@@ -116,6 +117,7 @@ t/bin-user-tools.t
 t/bin-yukki-git-init.t
 t/bin-yukki.psgi.t
 t/error.t
+t/git-version.t
 t/lib/Yukki/Test.pm
 t/model-repository.t
 t/release-pod-coverage.t

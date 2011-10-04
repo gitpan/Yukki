@@ -1,6 +1,6 @@
 package Yukki::Web;
 BEGIN {
-  $Yukki::Web::VERSION = '0.111830';
+  $Yukki::Web::VERSION = '0.112770';
 }
 use Moose;
 
@@ -236,7 +236,7 @@ Yukki::Web - the Yukki web server
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

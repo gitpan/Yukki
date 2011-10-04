@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.12.1; }
+use 5.012001;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -74,6 +74,8 @@ my %WriteMakefileArgs = (
     'Spreadsheet::Engine' => '0',
     'StackTrace::Auto' => '0',
     'Sub::Exporter' => '0',
+    'Syntax::Highlight::Engine::Kate' => '0',
+    'Syntax::Highlight::Engine::Kate::All' => '0',
     'Template::Semantic' => '0',
     'Text::MultiMarkdown' => '0',
     'Throwable' => '0',
@@ -83,7 +85,7 @@ my %WriteMakefileArgs = (
     'YAML' => '0',
     'autodie' => '0'
   },
-  'VERSION' => '0.111830',
+  'VERSION' => '0.112770',
   'test' => {
     'TESTS' => 't/*.t'
   }

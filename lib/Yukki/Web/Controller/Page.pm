@@ -1,12 +1,13 @@
 package Yukki::Web::Controller::Page;
 BEGIN {
-  $Yukki::Web::Controller::Page::VERSION = '0.111830';
+  $Yukki::Web::Controller::Page::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
 
 with 'Yukki::Web::Controller';
 
+use Try::Tiny;
 use Yukki::Error qw( http_throw );
 
 # ABSTRACT: controller for viewing and editing pages
@@ -273,15 +274,40 @@ sub view_diff {
     my $r1 = $ctx->request->query_parameters->{r1};
     my $r2 = $ctx->request->query_parameters->{r2};
 
-    $ctx->response->body(
-        $self->view('Page')->diff($ctx, {
-            title      => $page->title,
-            breadcrumb => $breadcrumb,
-            repository => $repo_name,
-            page       => $page->full_path,
-            diff       => [ $page->diff($r1, $r2) ],
-        })
-    );
+    try {
+
+        my $diff = '';
+        for my $chunk ($page->diff($r1, $r2)) {
+            given ($chunk->[0]) {
+                when (' ') { $diff .= $chunk->[1] }
+                when ('+') { $diff .= sprintf '<ins markdown="1">%s</ins>', $chunk->[1] }
+                when ('-') { $diff .= sprintf '<del markdown="1">%s</del>', $chunk->[1] }
+                default { warn "unknown chunk type $chunk->[0]" }
+            }
+        }
+
+        my $file_preview = $page->file_preview(
+            content => $diff,
+        );
+
+        $ctx->response->body(
+            $self->view('Page')->diff($ctx, {
+                title      => $page->title,
+                breadcrumb => $breadcrumb,
+                repository => $repo_name,
+                page       => $page->full_path,
+                file       => $file_preview,
+            })
+        );
+    }
+
+    catch {
+        my $ERROR = $_;
+        if ("$_" =~ /usage: git diff/) {
+            http_throw 'Diffs will not work with git versions before 1.7.2. Please use a newer version of git. If you are using a newer version of git, please file a support issue.';
+        }
+        die $ERROR;
+    };
 }
 
 
@@ -369,7 +395,7 @@ Yukki::Web::Controller::Page - controller for viewing and editing pages
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

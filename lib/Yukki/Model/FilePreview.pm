@@ -1,6 +1,6 @@
 package Yukki::Model::FilePreview;
 BEGIN {
-  $Yukki::Model::FilePreview::VERSION = '0.111830';
+  $Yukki::Model::FilePreview::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -48,7 +48,7 @@ Yukki::Model::FilePreview - a sub-class of the File model for handling previews
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

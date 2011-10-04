@@ -1,6 +1,6 @@
 package Yukki::Role::App;
 BEGIN {
-  $Yukki::Role::App::VERSION = '0.111830';
+  $Yukki::Role::App::VERSION = '0.112770';
 }
 use Moose::Role;
 
@@ -27,7 +27,7 @@ Yukki::Role::App - the role Yukki app-classes implement
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

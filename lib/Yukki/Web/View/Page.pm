@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 BEGIN {
-  $Yukki::Web::View::Page::VERSION = '0.111830';
+  $Yukki::Web::View::Page::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -132,16 +132,6 @@ sub diff {
     $ctx->response->breadcrumb($vars->{breadcrumb});
 
     $self->page_navigation($ctx->response, 'diff', $vars);
-
-    my $diff = '';
-    for my $chunk (@{ $vars->{diff} }) {
-        given ($chunk->[0]) {
-            when (' ') { $diff .= $chunk->[1] }
-            when ('+') { $diff .= sprintf '<ins markdown="1">%s</ins>', $chunk->[1] }
-            when ('-') { $diff .= sprintf '<del markdown="1">%s</del>', $chunk->[1] }
-            default { warn "unknown chunk type $chunk->[0]" }
-        }
-    }
 
     my $html = $file->fetch_formatted($ctx);
 
@@ -334,7 +324,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,6 @@
 package Yukki::Web::View::Attachment;
 BEGIN {
-  $Yukki::Web::View::Attachment::VERSION = '0.111830';
+  $Yukki::Web::View::Attachment::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -54,7 +54,7 @@ Yukki::Web::View::Attachment - View for attachment forms
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 

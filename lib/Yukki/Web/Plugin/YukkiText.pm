@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::YukkiText;
 BEGIN {
-  $Yukki::Web::Plugin::YukkiText::VERSION = '0.111830';
+  $Yukki::Web::Plugin::YukkiText::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -191,7 +191,7 @@ sub yukkitext {
             plugin_name => $1,
             arg         => $2,
         });
-    }xeg;
+    }xegms;
 
     # Handle the escaped plugin thing
     $yukkitext =~ s{
@@ -203,7 +203,7 @@ sub yukkitext {
             .*?                 # plugin arguments
 
         \}\})                   # }} to end
-    }{$1}xg;
+    }{$1}xgms;
 
     my $formatted = '<div>' . $self->format_markdown($yukkitext) . '</div>';
 
@@ -225,7 +225,7 @@ Yukki::Web::Plugin::YukkiText - format text/yukki files using markdown, etc.
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Spreadsheet;
 BEGIN {
-  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.111830';
+  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -192,7 +192,7 @@ Yukki::Web::Plugin::Spreadsheet - add spreadsheet functionality to wiki pages
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 SYNOPSIS
 

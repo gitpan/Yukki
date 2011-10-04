@@ -1,6 +1,6 @@
 package Yukki::Web::View;
 BEGIN {
-  $Yukki::Web::View::VERSION = '0.111830';
+  $Yukki::Web::View::VERSION = '0.112770';
 }
 use 5.12.1;
 use Moose;
@@ -189,7 +189,7 @@ Yukki::Web::View - base class for Yukki::Web views
 
 =head1 VERSION
 
-version 0.111830
+version 0.112770
 
 =head1 DESCRIPTION
 
