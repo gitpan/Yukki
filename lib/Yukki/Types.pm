@@ -1,6 +1,6 @@
 package Yukki::Types;
-BEGIN {
-  $Yukki::Types::VERSION = '0.112770';
+{
+  $Yukki::Types::VERSION = '0.121700';
 }
 use 5.12.1;
 use Moose;
@@ -125,7 +125,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.112770
+version 0.121700
 
 =head1 SYNOPSIS
 
@@ -217,7 +217,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Qubling Software LLC.
+This software is copyright (c) 2012 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

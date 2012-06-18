@@ -14,7 +14,7 @@ configure_requires:
   ExtUtils::MakeMaker: 6.30
   File::ShareDir::Install: 0.03
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.200009, CPAN::Meta::Converter version 2.110440'
+generated_by: 'Dist::Zilla version 4.300018, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -22,6 +22,7 @@ meta-spec:
 name: Yukki
 requires:
   CHI: 0
+  Cache::FastMmap: 0
   Crypt::SaltedHash: 0
   DateTime::Format::Mail: 0
   Digest::SHA1: 0
@@ -29,7 +30,7 @@ requires:
   File::Copy::Recursive: 0
   File::Path: 0
   File::ShareDir: 0
-  Git::Repository: 0
+  Git::Repository: v1.18.0
   HTTP::Throwable: 0
   IO::Prompter: 0
   JSON: 0
@@ -51,6 +52,8 @@ requires:
   Path::Router: 0
   Path::Router::Route: 0
   Path::Router::Route::Match: 0
+  Plack::App::File: 0
+  Plack::Builder: 0
   Plack::Request: 0
   Plack::Response: 0
   Plack::Session::Store::Cache: 0
@@ -68,8 +71,8 @@ requires:
   XML::Twig: 0
   YAML: 0
   autodie: 0
-  perl: 5.12.1
+  perl: v5.12.1
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.112770
+version: 0.121700

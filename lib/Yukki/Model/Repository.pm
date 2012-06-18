@@ -1,6 +1,6 @@
 package Yukki::Model::Repository;
-BEGIN {
-  $Yukki::Model::Repository::VERSION = '0.112770';
+{
+  $Yukki::Model::Repository::VERSION = '0.121700';
 }
 use 5.12.1;
 use Moose;
@@ -11,7 +11,7 @@ use Yukki::Error qw( http_throw );
 use Yukki::Model::File;
 
 use DateTime::Format::Mail;
-use Git::Repository;
+use Git::Repository v1.18;
 use MooseX::Types::Path::Class;
 
 # ABSTRACT: model for accessing objects in a git repository
@@ -447,7 +447,7 @@ Yukki::Model::Repository - model for accessing objects in a git repository
 
 =head1 VERSION
 
-version 0.112770
+version 0.121700
 
 =head1 SYNOPSIS
 
@@ -672,7 +672,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Qubling Software LLC.
+This software is copyright (c) 2012 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

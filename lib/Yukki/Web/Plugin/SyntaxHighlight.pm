@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::SyntaxHighlight;
-BEGIN {
-  $Yukki::Web::Plugin::SyntaxHighlight::VERSION = '0.112770';
+{
+  $Yukki::Web::Plugin::SyntaxHighlight::VERSION = '0.121700';
 }
 use v5.12;
 use Moose;
@@ -93,7 +93,7 @@ Yukki::Web::Plugin::SyntaxHighlight - add syntax highlighting to wiki pages
 
 =head1 VERSION
 
-version 0.112770
+version 0.121700
 
 =head1 SYNOPSIS
 
@@ -149,7 +149,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2011 by Qubling Software LLC.
+This software is copyright (c) 2012 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
