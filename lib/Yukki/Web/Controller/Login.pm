@@ -1,6 +1,6 @@
 package Yukki::Web::Controller::Login;
 {
-  $Yukki::Web::Controller::Login::VERSION = '0.121700';
+  $Yukki::Web::Controller::Login::VERSION = '0.121790';
 }
 use 5.12.1;
 use Moose;
@@ -52,8 +52,6 @@ sub check_login_submission {
 
     my $user = $self->model('User')->find(login_name => $login_name);
 
-    $ctx->add_errors('no such user or you typed your password incorrectly') unless $user;
-
     if (not ($user and $self->check_password($user, $password))) {
         $ctx->add_errors('no such user or you typed your password incorrectly');
     }
@@ -90,7 +88,7 @@ Yukki::Web::Controller::Login - shows the login page and handles login
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 

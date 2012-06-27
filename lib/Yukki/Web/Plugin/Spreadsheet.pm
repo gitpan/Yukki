@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::Spreadsheet;
 {
-  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.121700';
+  $Yukki::Web::Plugin::Spreadsheet::VERSION = '0.121790';
 }
 use 5.12.1;
 use Moose;
@@ -108,7 +108,9 @@ sub lookup_name {
             full_path => $path,
         });
 
-        $self->load_spreadsheet($ctx, $other_file);
+        $self->load_spreadsheet($ctx, $other_file)
+            unless $other_file->repository_name eq $file->repository_name
+               and $other_file->full_path       eq $file->full_path;;
 
         return $self->cell($ctx, $other_file, $name);
     }
@@ -192,7 +194,7 @@ Yukki::Web::Plugin::Spreadsheet - add spreadsheet functionality to wiki pages
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 SYNOPSIS
 

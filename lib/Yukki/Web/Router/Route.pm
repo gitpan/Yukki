@@ -1,6 +1,6 @@
 package Yukki::Web::Router::Route;
 {
-  $Yukki::Web::Router::Route::VERSION = '0.121700';
+  $Yukki::Web::Router::Route::VERSION = '0.121790';
 }
 use Moose;
 
@@ -130,7 +130,7 @@ Yukki::Web::Router::Route - Adds ACLs to routes
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 

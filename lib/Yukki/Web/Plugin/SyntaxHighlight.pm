@@ -1,6 +1,6 @@
 package Yukki::Web::Plugin::SyntaxHighlight;
 {
-  $Yukki::Web::Plugin::SyntaxHighlight::VERSION = '0.121700';
+  $Yukki::Web::Plugin::SyntaxHighlight::VERSION = '0.121790';
 }
 use v5.12;
 use Moose;
@@ -93,7 +93,7 @@ Yukki::Web::Plugin::SyntaxHighlight - add syntax highlighting to wiki pages
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 SYNOPSIS
 

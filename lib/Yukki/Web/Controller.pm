@@ -1,6 +1,6 @@
 package Yukki::Web::Controller;
 {
-  $Yukki::Web::Controller::VERSION = '0.121700';
+  $Yukki::Web::Controller::VERSION = '0.121790';
 }
 use Moose::Role;
 
@@ -29,7 +29,7 @@ Yukki::Web::Controller - Base class for Yukki::Web controllers
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 

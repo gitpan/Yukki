@@ -1,6 +1,6 @@
 package Yukki::Web::Request;
 {
-  $Yukki::Web::Request::VERSION = '0.121700';
+  $Yukki::Web::Request::VERSION = '0.121790';
 }
 use Moose;
 
@@ -55,7 +55,7 @@ Yukki::Web::Request - Yukki request descriptor
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 

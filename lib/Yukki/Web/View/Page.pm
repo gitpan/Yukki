@@ -1,6 +1,6 @@
 package Yukki::Web::View::Page;
 {
-  $Yukki::Web::View::Page::VERSION = '0.121700';
+  $Yukki::Web::View::Page::VERSION = '0.121790';
 }
 use 5.12.1;
 use Moose;
@@ -324,7 +324,7 @@ Yukki::Web::View::Page - render HTML for viewing and editing wiki pages
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 

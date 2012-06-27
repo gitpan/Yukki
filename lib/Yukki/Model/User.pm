@@ -1,6 +1,6 @@
 package Yukki::Model::User;
 {
-  $Yukki::Model::User::VERSION = '0.121700';
+  $Yukki::Model::User::VERSION = '0.121790';
 }
 use Moose;
 
@@ -22,7 +22,11 @@ sub find {
     );
 
     my $user_file = $self->locate('user_path', $login_name);
-    return LoadFile($user_file);
+    if (-e $user_file) {
+        return LoadFile($user_file);
+    }
+
+    return;
 }
 
 1;
@@ -36,7 +40,7 @@ Yukki::Model::User - lookup users
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 SYNOPSIS
 

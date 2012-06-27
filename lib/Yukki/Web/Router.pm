@@ -1,6 +1,6 @@
 package Yukki::Web::Router;
 {
-  $Yukki::Web::Router::VERSION = '0.121700';
+  $Yukki::Web::Router::VERSION = '0.121790';
 }
 use Moose;
 
@@ -116,7 +116,7 @@ Yukki::Web::Router - send requests to the correct controllers, yo
 
 =head1 VERSION
 
-version 0.121700
+version 0.121790
 
 =head1 DESCRIPTION
 
