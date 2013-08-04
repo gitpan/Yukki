@@ -13,15 +13,7 @@ install_share module => "Yukki::Web", "skel";
 my %WriteMakefileArgs = (
   "ABSTRACT" => "Yet Uh-nother wiki",
   "AUTHOR" => "Andrew Sterling Hanenkamp <hanenkamp\@cpan.org>",
-  "BUILD_REQUIRES" => {
-    "File::Temp" => 0,
-    "IPC::Run3" => 0,
-    "Probe::Perl" => 0,
-    "Test::Exception" => 0,
-    "Test::Moose" => 0,
-    "Test::More" => 0,
-    "Test::Script" => 0
-  },
+  "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30",
     "File::ShareDir::Install" => "0.03"
@@ -88,12 +80,35 @@ my %WriteMakefileArgs = (
     "YAML" => 0,
     "autodie" => 0
   },
-  "VERSION" => "0.121790",
+  "TEST_REQUIRES" => {
+    "File::Temp" => 0,
+    "IPC::Run3" => 0,
+    "Probe::Perl" => 0,
+    "Test::Exception" => 0,
+    "Test::Moose" => 0,
+    "Test::More" => 0,
+    "Test::Script" => 0,
+    "lib" => 0
+  },
+  "VERSION" => "0.132160",
   "test" => {
     "TESTS" => "t/*.t"
   }
 );
 
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  my $tr = delete $WriteMakefileArgs{TEST_REQUIRES};
+  my $br = $WriteMakefileArgs{BUILD_REQUIRES};
+  for my $mod ( keys %$tr ) {
+    if ( exists $br->{$mod} ) {
+      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
+    }
+    else {
+      $br->{$mod} = $tr->{$mod};
+    }
+  }
+}
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
   my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};

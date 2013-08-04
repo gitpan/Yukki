@@ -10,11 +10,12 @@ build_requires:
   Test::Moose: 0
   Test::More: 0
   Test::Script: 0
+  lib: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.30
   File::ShareDir::Install: 0.03
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300018, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -75,4 +76,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Yukki
   repository: git://github.com/zostay/Yukki.git
-version: 0.121790
+version: 0.132160

@@ -1,6 +1,6 @@
 package Yukki::Web::View::Attachment;
 {
-  $Yukki::Web::View::Attachment::VERSION = '0.121790';
+  $Yukki::Web::View::Attachment::VERSION = '0.132160';
 }
 use 5.12.1;
 use Moose;
@@ -43,9 +43,8 @@ sub remove {
     );
 }
 
-
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -54,7 +53,7 @@ Yukki::Web::View::Attachment - View for attachment forms
 
 =head1 VERSION
 
-version 0.121790
+version 0.132160
 
 =head1 DESCRIPTION
 
@@ -76,10 +75,9 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Qubling Software LLC.
+This software is copyright (c) 2013 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
