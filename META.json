@@ -4,7 +4,7 @@
       "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300038, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -31,6 +31,7 @@
          "requires" : {
             "CHI" : "0",
             "Cache::FastMmap" : "0",
+            "Class::Load" : "0",
             "Crypt::SaltedHash" : "0",
             "DateTime::Format::Mail" : "0",
             "Digest::SHA1" : "0",
@@ -107,6 +108,6 @@
          "web" : "http://github.com/zostay/Yukki"
       }
    },
-   "version" : "0.132160"
+   "version" : "0.140290"
 }
 

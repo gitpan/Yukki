@@ -1,6 +1,6 @@
 package Yukki::Types;
 {
-  $Yukki::Types::VERSION = '0.132160';
+  $Yukki::Types::VERSION = '0.140290';
 }
 use 5.12.1;
 use Moose;
@@ -29,7 +29,7 @@ subtype LoginName,
     message { "login name $_ must only contain letters and numbers" };
 
 
-enum AccessLevel, qw( read write none );
+enum AccessLevel, [qw( read write none )];
 
 
 subtype NavigationLinks,
@@ -46,7 +46,7 @@ subtype NavigationMenuMap,
     as HashRef[ NavigationLinks ];
 
 
-enum BaseURLEnum, qw( SCRIPT_NAME REWRITE );
+enum BaseURLEnum, [qw( SCRIPT_NAME REWRITE )];
 
 subtype BaseURL, as BaseURLEnum|Uri;
 
@@ -126,7 +126,7 @@ Yukki::Types - standard types for use in Yukki
 
 =head1 VERSION
 
-version 0.132160
+version 0.140290
 
 =head1 SYNOPSIS
 
@@ -218,7 +218,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Qubling Software LLC.
+This software is copyright (c) 2014 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

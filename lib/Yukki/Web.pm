@@ -1,10 +1,12 @@
 package Yukki::Web;
 {
-  $Yukki::Web::VERSION = '0.132160';
+  $Yukki::Web::VERSION = '0.140290';
 }
 use Moose;
 
 extends qw( Yukki );
+
+use Class::Load;
 
 use Yukki::Error qw( http_throw http_exception );
 use Yukki::Types qw( PluginList );
@@ -64,7 +66,7 @@ sub _build_plugins {
         my $class  = $module;
            $class  = "Yukki::Web::Plugin::$class" unless $class =~ s/^\+//;
 
-        Class::MOP::load_class($class);
+        Class::Load::load_class($class);
 
         push @plugins, $class->new(%$plugin_settings, app => $self);
     }
@@ -87,7 +89,7 @@ sub BUILD {
 sub component {
     my ($self, $type, $name) = @_;
     my $class_name = join '::', 'Yukki::Web', $type, $name;
-    Class::MOP::load_class($class_name);
+    Class::Load::load_class($class_name);
     return $class_name->new(app => $self);
 }
 
@@ -237,7 +239,7 @@ Yukki::Web - the Yukki web server
 
 =head1 VERSION
 
-version 0.132160
+version 0.140290
 
 =head1 DESCRIPTION
 
@@ -305,7 +307,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Qubling Software LLC.
+This software is copyright (c) 2014 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

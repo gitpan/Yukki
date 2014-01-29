@@ -1,6 +1,6 @@
 package Yukki::Settings;
 {
-  $Yukki::Settings::VERSION = '0.132160';
+  $Yukki::Settings::VERSION = '0.140290';
 }
 use 5.12.1;
 use Moose;
@@ -65,7 +65,7 @@ has repositories => (
 {
     package Yukki::Settings::Anonymous;
 {
-  $Yukki::Settings::Anonymous::VERSION = '0.132160';
+  $Yukki::Settings::Anonymous::VERSION = '0.140290';
 }
     use Moose;
 
@@ -88,7 +88,7 @@ has repositories => (
 {
     package Yukki::Settings::Repository;
 {
-  $Yukki::Settings::Repository::VERSION = '0.132160';
+  $Yukki::Settings::Repository::VERSION = '0.140290';
 }
     use Moose;
 
@@ -161,7 +161,7 @@ Yukki::Settings - provides structure and validation to settings in yukki.conf
 
 =head1 VERSION
 
-version 0.132160
+version 0.140290
 
 =head1 DESCRIPTION
 
@@ -253,7 +253,7 @@ Andrew Sterling Hanenkamp <hanenkamp@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Qubling Software LLC.
+This software is copyright (c) 2014 by Qubling Software LLC.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

@@ -31,6 +31,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "CHI" => 0,
     "Cache::FastMmap" => 0,
+    "Class::Load" => 0,
     "Crypt::SaltedHash" => 0,
     "DateTime::Format::Mail" => 0,
     "Digest::SHA1" => 0,
@@ -90,7 +91,7 @@ my %WriteMakefileArgs = (
     "Test::Script" => 0,
     "lib" => 0
   },
-  "VERSION" => "0.132160",
+  "VERSION" => "0.140290",
   "test" => {
     "TESTS" => "t/*.t"
   }
